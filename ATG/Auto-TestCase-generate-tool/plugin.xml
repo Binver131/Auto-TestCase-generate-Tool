@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="autotestcasegeneratetool.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="autotestcasegeneratetool.Perspective"
+            name="RCP Perspective"
+            id="Auto-TestCase-generate-tool.perspective">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            icon="icons/sample2.gif"
+            class="autotestcasegeneratetool.View"
+            name="Message"
+            id="Auto-TestCase-generate-tool.view">
+      </view>
+      <view
+            allowMultiple="true"
+            icon="icons/sample3.gif"
+            class="autotestcasegeneratetool.NavigationView"
+            name="Mailboxes"
+            id="Auto-TestCase-generate-tool.navigationView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="Auto-TestCase-generate-tool.category"
+            name="Mail">
+      </category>
+      <command
+            description="Opens a mailbox"
+            name="Open Mailbox"
+            id="Auto-TestCase-generate-tool.open"
+            categoryId="Auto-TestCase-generate-tool.category">
+      </command>
+      <command
+            description="Open a message dialog"
+            name="Open Message Dialog"
+            id="Auto-TestCase-generate-tool.openMessage"
+            categoryId="Auto-TestCase-generate-tool.category">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="Auto-TestCase-generate-tool.open"
+            sequence="CTRL+SHIFT+O"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>
+      <key
+            commandId="Auto-TestCase-generate-tool.openMessage"
+            sequence="CTRL+SHIFT+M"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>
+      <key
+            commandId="org.eclipse.ui.file.exit"
+            sequence="CTRL+SHIFT+Q"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            name="AUTO TestCase-generate Tool"
+            application="Auto-TestCase-generate-tool.application">
+         <property
+               name="aboutText"
+               value="自动测试用例生成工具">
+         </property>
+         <property
+               name="windowImages"
+               value="icons/sample2.gif">
+         </property>
+         <property
+               name="aboutImage"
+               value="product_lg.gif">
+         </property>
+      </product>
+   </extension>
+
+</plugin>

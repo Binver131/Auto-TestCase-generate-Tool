@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Auto-TestCase-generate-tool
+Bundle-SymbolicName: Auto-TestCase-generate-tool;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: auto_testcase_generate_tool.Activator
+Bundle-Vendor: XUAN
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.apache.felix.scr,
+ org.eclipse.equinox.event,
+ org.eclipse.nebula.widgets.grid;bundle-version="1.1.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: Auto-TestCase-generate-tool
+Bundle-ActivationPolicy: lazy
