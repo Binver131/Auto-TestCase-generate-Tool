@@ -7,6 +7,7 @@
 * 安装开发环境
   *  这个网站上都有 https://www.eclipse.org/
   *  Eclipse Version: 2020-03 (4.15.0)
+  *  JDK SE 1.8.0_181 (1.8即可)
   *  Eclipse Plug-in Development Environment	3.14.300.v20200305-0155
   *  Eclipse RCP	4.15.0.v20200305-0155 安装完前一个就有了
   *  Nebula插件  安装地址：http://download.eclipse.org/nebula/releases/2.3.0
