@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.nebula.widgets.grid.*;
 
@@ -30,10 +31,11 @@ public class View extends ViewPart {
 	/**
 	 * The text control that's displaying the content of the email message.
 	 */
-	private Text messageText;
+	public static String requirementID = "R1.1";
 	
 	@Override
 	public void createPartControl(Composite parent) {
+		this.setTitle(requirementID);
 		Composite top = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -57,7 +59,7 @@ public class View extends ViewPart {
 		l.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
 		
 		l = new Label(banner, SWT.WRAP);
-		l.setText("需求R1.1测试用例");
+		l.setText("需求"+requirementID+"测试用例");
 		l.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false));
 		
 		l = new Label(banner, SWT.NONE);
@@ -170,6 +172,6 @@ public class View extends ViewPart {
 
 	@Override
 	public void setFocus() {
-		messageText.setFocus();
+		return;
 	}
 }
