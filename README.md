@@ -12,4 +12,5 @@
   *  Nebula插件  安装地址：http://download.eclipse.org/nebula/releases/2.3.0
       * 若在线安装不成功，可下载安装包，本地安装 地址：https://www.eclipse.org/nebula/releases/2.3.0/index.php
 * 安装完环境后，把框架代码跑起来。
+  * 运行成功后截图如下：![Image text](img/example.jpg)
   * eclipse可以和GitHub连接起来，方便版本管理，具体方法参考：https://www.cnblogs.com/ilyar1015/p/8574170.html 或自行百度。
