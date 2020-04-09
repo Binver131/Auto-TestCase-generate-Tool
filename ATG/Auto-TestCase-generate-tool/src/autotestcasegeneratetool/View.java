@@ -35,8 +35,6 @@ public class View extends ViewPart {
 	
 	@Override
 	public void createPartControl(Composite parent) {
-		this.setTitle(requirementID);
-		
 		Composite top = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
