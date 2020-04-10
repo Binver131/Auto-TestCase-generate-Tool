@@ -7,12 +7,12 @@
 * 安装开发环境
   *  已经打包好了，解压直接使用。
   *  链接：https://pan.baidu.com/s/1T0RlJsEYa6cEMKQaHdHhzA 提取码：w8dc
-  *  ~~这个网站上都有 https://www.eclipse.org/
-  *  ~~Eclipse Version: 2020-03 (4.15.0)
-  *  ~~JDK SE 1.8.0_181 (1.8即可)
-  *  ~~Eclipse Plug-in Development Environment	3.14.300.v20200305-0155
-  *  ~~Eclipse RCP	4.15.0.v20200305-0155 安装完前一个就有了
-  *  ~~Nebula插件  安装地址：http://download.eclipse.org/nebula/releases/2.3.0
+  *  ~~这个网站上都有 https://www.eclipse.org/~~
+  *  ~~Eclipse Version: 2020-03 (4.15.0)~~
+  *  ~~JDK SE 1.8.0_181 (1.8即可)~~
+  *  ~~Eclipse Plug-in Development Environment	3.14.300.v20200305-0155~~
+  *  ~~Eclipse RCP	4.15.0.v20200305-0155 安装完前一个就有了~~
+  *  ~~Nebula插件  安装地址：http://download.eclipse.org/nebula/releases/2.3.0~~
       ~~* 若在线安装不成功，可下载安装包，本地安装 地址：https://www.eclipse.org/nebula/releases/2.3.0/index.php~~
 * 安装完环境后，把框架代码跑起来。
   * 运行成功后截图如下：![Image text](img/example.jpg)
