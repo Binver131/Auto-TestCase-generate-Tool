@@ -1,5 +1,6 @@
 package autotestcasegeneratetool;
 
+import org.eclipse.equinox.internal.app.Messages;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.ICoolBarManager;
@@ -32,7 +33,9 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     private IWorkbenchAction newWindowAction;
     private OpenViewAction openViewAction;
     private Action messagePopupAction;
+    private IWorkbenchAction helpAction;
     
+  
 
     public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
         super(configurer);
@@ -45,7 +48,9 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         // The corresponding commands keybindings are defined in the plugin.xml file.
         // Registering also provides automatic disposal of the actions when
         // the window is closed.
-
+    	helpAction = ActionFactory.HELP_CONTENTS.create(window);
+    	register(helpAction);
+    	
         exitAction = ActionFactory.QUIT.create(window);
         register(exitAction);
         
@@ -62,27 +67,28 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         register(messagePopupAction);
     }
     
-    @Override
-    protected void fillMenuBar(IMenuManager menuBar) {
-        MenuManager fileMenu = new MenuManager("&File", IWorkbenchActionConstants.M_FILE);
-        MenuManager helpMenu = new MenuManager("&Help", IWorkbenchActionConstants.M_HELP);
-        
-        menuBar.add(fileMenu);
-        // Add a group marker indicating where action set menus will appear.
-        menuBar.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
-        menuBar.add(helpMenu);
-        
-        // File
-        fileMenu.add(newWindowAction);
-        fileMenu.add(new Separator());
-        fileMenu.add(messagePopupAction);
-        fileMenu.add(openViewAction);
-        fileMenu.add(new Separator());
-        fileMenu.add(exitAction);
-        
-        // Help
-        helpMenu.add(aboutAction);
-    }
+//    @Override
+//    protected void fillMenuBar(IMenuManager menuBar) {
+//        MenuManager fileMenu = new MenuManager("&File", IWorkbenchActionConstants.M_FILE);
+//        MenuManager helpMenu = new MenuManager("&Help", IWorkbenchActionConstants.M_HELP);
+//        
+//        menuBar.add(fileMenu);
+//        // Add a group marker indicating where action set menus will appear.
+//        menuBar.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+//        menuBar.add(helpMenu);
+//        
+//        // File
+//        fileMenu.add(newWindowAction);
+//        fileMenu.add(new Separator());
+//        fileMenu.add(messagePopupAction);
+//        fileMenu.add(openViewAction);
+//        fileMenu.add(new Separator());
+//        fileMenu.add(exitAction);
+//        
+//        // Help
+//        helpMenu.add(aboutAction);
+//        helpMenu.add(helpAction);
+//    }
     
     @Override
     protected void fillCoolBar(ICoolBarManager coolBar) {

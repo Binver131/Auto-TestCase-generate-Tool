@@ -22,7 +22,14 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
         configurer.setInitialSize(new Point(600, 400));
         configurer.setShowCoolBar(true);
-        configurer.setShowStatusLine(false);
+        configurer.setShowStatusLine(true);
+    }
+    
+    @Override
+    public void postWindowOpen() {
+    	// TODO Auto-generated method stub
+    	IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
+    	configurer.getWindow().getShell().setMaximized(true);
     }
     
 }

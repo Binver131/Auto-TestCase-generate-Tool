@@ -3,6 +3,10 @@ package autotestcasegeneratetool;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.IConsoleConstants;
 
 public class Perspective implements IPerspectiveFactory {
 
@@ -15,12 +19,23 @@ public class Perspective implements IPerspectiveFactory {
 	public void createInitialLayout(IPageLayout layout) {
 		String editorArea = layout.getEditorArea();
 		layout.setEditorAreaVisible(false);
+		IFolderLayout navigationFolder = layout.createFolder("需求管理器", IPageLayout.LEFT, 0.75f, editorArea);		
+		navigationFolder.addView(NavigationView.ID);
 		
-		layout.addStandaloneView(NavigationView.ID,  false, IPageLayout.LEFT, 0.25f, editorArea);
-		IFolderLayout folder = layout.createFolder("测试用例集", IPageLayout.TOP, 0.5f, editorArea);
-		folder.addPlaceholder(View.ID + ":*");
+		IFolderLayout folder = layout.createFolder("测试用例集", IPageLayout.RIGHT, 0.25f, NavigationView.ID);
+		folder.addPlaceholder(View.ID+":*");
 		folder.addView(View.ID);
 		
-		layout.getViewLayout(NavigationView.ID).setCloseable(false);
+		
+		IFolderLayout MessageFolder = layout.createFolder("处理", IPageLayout.RIGHT, 0.75f, View.ID);
+		MessageFolder.addView(ProcessView.ID);
+					
+		
+		ConsoleFactory cf = new ConsoleFactory();
+		layout.addView(IConsoleConstants.ID_CONSOLE_VIEW, IPageLayout.BOTTOM,
+				0.70f, View.ID);
+
+		cf.openConsole();
+		
 	}
 }
