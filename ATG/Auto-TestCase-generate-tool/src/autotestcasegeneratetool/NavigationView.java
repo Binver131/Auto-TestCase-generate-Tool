@@ -3,9 +3,15 @@ package autotestcasegeneratetool;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -14,6 +20,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -30,6 +37,8 @@ import org.eclipse.ui.part.ViewPart;
 public class NavigationView extends ViewPart {
 	public static final String ID = "Auto-TestCase-generate-tool.navigationView";
 	private TreeViewer viewer;
+	   private MenuManager fMenuMgr; 
+	   private Menu fMenu; 
 
 	class TreeObject {
 		private String name;
@@ -74,7 +83,7 @@ public class NavigationView extends ViewPart {
 		}
 	}
 
-	class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider {
+	class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider{
 
 		@Override
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
@@ -111,6 +120,7 @@ public class NavigationView extends ViewPart {
 				return ((TreeParent)parent).hasChildren();
 			return false;
 		}
+
 	}
 
 	class ViewLabelProvider extends LabelProvider {
@@ -154,30 +164,39 @@ public class NavigationView extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
+		MenuManager menuManager = new MenuManager();
+
+	    Menu menu = menuManager.createContextMenu(parent);
+
+	    parent.setMenu(menu);
+	    getSite().registerContextMenu(menuManager, null);
+	    
+	    
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
-		viewer.setInput(createDummyModel());
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			
-			@Override
-			public void doubleClick(DoubleClickEvent arg0) {
-				// TODO Auto-generated method stub
-				try {
-					View.requirementID = arg0.getSelection().toString();
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(View.ID, arg0.getSelection().toString(), IWorkbenchPage.VIEW_ACTIVATE);					
-				} catch (PartInitException e) {
-					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "Error opening view:" + e.getMessage());
-				}
-			}
-		});
+		viewer.setInput(createDummyModel());		
 		
+		hookContextMenu();
 		
-		
+		getSite().setSelectionProvider(viewer);
 			
 		
 	}
 
+	private void hookContextMenu() { 
+	       fMenuMgr = new MenuManager("#PopupMenu"); 
+	       fMenuMgr.setRemoveAllWhenShown(true); 
+	       fMenuMgr.addMenuListener(new IMenuListener() { 
+	           public void menuAboutToShow(IMenuManager manager) {                
+	           } 
+	       }); 
+	       fMenu = fMenuMgr.createContextMenu(viewer.getControl()); 
+	 
+	       viewer.getControl().setMenu(fMenu); 
+	       getSite().registerContextMenu(fMenuMgr, viewer);              
+	   }    
+	
 	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
