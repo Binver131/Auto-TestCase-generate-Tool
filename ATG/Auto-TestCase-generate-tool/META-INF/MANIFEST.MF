@@ -24,3 +24,5 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: Auto-TestCase-generate-tool
 Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: mysql-connector-java-5.1.47.jar,
+ .
