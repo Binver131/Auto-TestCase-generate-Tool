@@ -1,6 +1,9 @@
 package autotestcasegeneratetool;
 
+
 import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -18,6 +21,13 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
+
+import entity.DataForm;
+import entity.NewTestCase;
+import entity.TestCase;
+import jdbc.ConnectHelper;
+import jdbc.Handle;
+
 import org.eclipse.nebula.widgets.grid.*;
 
 
@@ -39,6 +49,7 @@ public class View extends ViewPart implements ISelectionListener{
 	private Grid grid;
 	@Override
 	public void createPartControl(Composite parent) {
+		//ConnectHelper.connectHelper();
 		Composite top = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 2;
@@ -131,16 +142,28 @@ public class View extends ViewPart implements ISelectionListener{
 		};
 		//每条测试用例所包含的信息
 		ArrayList<VarInformation> varlist=new ArrayList<VarInformation>();
+		Handle handle = new Handle("R1.1");
 		varlist.add(new VarInformation(0,"序号",1));
-		varlist.add(new VarInformation(1,"MODE",6));
-		varlist.add(new VarInformation(1,"SENSOR",5));
-		varlist.add(new VarInformation(1,"PROTECT_SWITCH",5));
-		varlist.add(new VarInformation(2,"S_A",1));
-		varlist.add(new VarInformation(2,"S_B",1));
-		varlist.add(new VarInformation(2,"S_C",1));
-		varlist.add(new VarInformation(3,"MAIN_WARNING",5));
-		varlist.add(new VarInformation(3,"PROTECTOR",5));
-		varlist.add(new VarInformation(4,"评价准则",6));
+		DataForm dataForm = handle.dataHandle("R1.1");
+//		varlist.add(new VarInformation(1,"MODE",6));
+//		varlist.add(new VarInformation(1,"SENSOR",5));
+//		varlist.add(new VarInformation(1,"PROTECT_SWITCH",5));
+		for(String temp:dataForm.getCondition()) {
+			varlist.add(new VarInformation(1,temp,6));
+		}
+		for(String temp:dataForm.getInput()) {
+			varlist.add(new VarInformation(2,temp,1));
+		}
+		for(String temp:dataForm.getOutput()) {
+			varlist.add(new VarInformation(3,temp,5));
+		}
+
+//		varlist.add(new VarInformation(2,"S_A",1));
+//		varlist.add(new VarInformation(2,"S_B",1));
+//		varlist.add(new VarInformation(2,"S_C",1));
+//		varlist.add(new VarInformation(3,"MAIN_WARNING",5));
+//		varlist.add(new VarInformation(3,"PROTECTOR",5));
+		varlist.add(new VarInformation(4,"评价准则",7));
 		
 		//表格开始
 		
@@ -186,19 +209,99 @@ public class View extends ViewPart implements ISelectionListener{
 		column5.setText("评价准则");
 		column5.setWidth(100);
 	
+//		String testVectors[][] = new String[1][9];
+//		int testVectorsrow =0;
+		List<NewTestCase> testcaseList = new ArrayList<>();
+		for(TestCase temp:ConnectHelper.testcaseList) {
+			NewTestCase newtestcase = handle.testcaseHandle(temp);
+			testcaseList.add(newtestcase);
+//			for(int testVectorscol=0,k=newtestcase.getTestcase().size();testVectorscol<k;testVectorscol++ ) {
+//				testVectors[testVectorsrow][testVectorscol]=newtestcase.getTestcase().get(testVectorscol);
+//			}
+//			testVectorsrow++;
+		}
+		
+		
 		
 		
 		//所有的测试用例
-		double testVectors[][]={
-				{0,6,0,0,65535,65535,65535,1,0,7},
-				{0,6,0,0,65535,65535,65535,1,0,7},
-				{0,6,0,0,6555,65535,65535,1,0,7},
-				{0,6,0,0,65535,-65536,65535,1,0,2},
-				{0,6,0,0,65535,65535,65535,1,0,4},
-				{0,6,0,0,65535,65535,65535,1,1,7}
-		};
+//		double testVectors[][]={
+//				{0,6,0,0,65535,65535,65535,1,0,7},
+//				{0,6,0,0,65535,65535,65535,1,0,7},
+//				{0,6,0,0,6555,65535,65535,1,0,7},
+//				{0,6,0,0,65535,-65536,65535,1,0,2},
+//				{0,6,0,0,65535,65535,65535,1,0,4},
+//				{0,6,0,0,65535,65535,65535,1,1,7}
+//		};
 		//根据变量信息输出测试用例
       ArrayList<GridItem> item=new ArrayList<GridItem>();
+      for(int i=0,k=testcaseList.size();i<k;i++)
+      {
+    	  item.add(new GridItem(grid,SWT.NONE));
+      }
+		for(int i=0,k=testcaseList.size();i<k;i++)
+		{
+			for(int j=0,s=testcaseList.get(0).getTestcase().size();j<=s+1;j++) {
+				if(varlist.get(j).varGroup==0) {
+					item.get(i).setText(j,requireID.getText());
+				}
+				else if(j==s+1) {
+					//if(testVectors[i][j]==7) {
+						item.get(i).setText(j,testcaseList.get(i).getTestcaseEvaluate());
+					//}
+					//else {
+						
+					//}
+				}
+				else {
+					/*if(varlist.get(j).varType==0) {
+						
+						item.get(i).setText(j, ""+(short)(testVectors[i][j]));
+					}
+					else if(varlist.get(j).varType==1) {
+						
+						item.get(i).setText(j, ""+(int)(testVectors[i][j]));
+					}
+					else if(varlist.get(j).varType==2) {
+						
+						item.get(i).setText(j, ""+(long)(testVectors[i][j]));
+					}
+					else if(varlist.get(j).varType==3) {
+						
+						item.get(i).setText(j, ""+(double)(testVectors[i][j]));
+					}
+					else if(varlist.get(j).varType==4) {
+						
+						item.get(i).setText(j, ""+(float)(testVectors[i][j]));
+					}
+					else if(varlist.get(j).varType==5) {
+						
+						if(testVectors[i][j]==1) {
+							item.get(i).setText(j,"ON");
+						}
+						else if(testVectors[i][j]==0){
+							item.get(i).setText(j,"OFF");
+						}
+						else {
+							
+						}
+					}
+					else if(varlist.get(j).varType==6) {
+						if(testVectors[i][j]==6) {
+						item.get(i).setText(j, "WALT");
+					}
+						else {
+							
+						}}
+					else {
+						
+					}*/
+					item.get(i).setText(j, testcaseList.get(i).getTestcase().get(j-1));
+				}
+			}
+		}
+		
+/*
       for(int i=0;i<testVectors.length;i++)
       {
     	  item.add(new GridItem(grid,SWT.NONE));
@@ -210,12 +313,12 @@ public class View extends ViewPart implements ISelectionListener{
 					item.get(i).setText(j,requireID.getText());
 				}
 				else if(varlist.get(j).varGroup==4) {
-					if(testVectors[i][j]==7) {
+					//if(testVectors[i][j]==7) {
 						item.get(i).setText(j,"EQUAL");
-					}
-					else {
+					//}
+					//else {
 						
-					}
+					//}
 				}
 				else {
 					if(varlist.get(j).varType==0) {
@@ -260,12 +363,11 @@ public class View extends ViewPart implements ISelectionListener{
 					else {
 						
 					}
-
+					item.get(i).setText(j, testVectors[i][j-1]);
 				}
 			}
 		}
-		
-	
+ */
 	
 	}
 
