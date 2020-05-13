@@ -1,18 +1,24 @@
 package autotestcasegeneratetool;
 
-import java.awt.List;
+import java.util.List;
 import java.util.ArrayList;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -24,8 +30,18 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+
+import autotestcasegeneratetool.NavigationView.ViewContentProvider;
+import autotestcasegeneratetool.NavigationView.ViewLabelProvider;
+import entity.DataBase;
+import entity.Model;
+import entity.Requirement;
+import entity.Variables;
+
 import org.eclipse.nebula.widgets.grid.*;
 
 
@@ -39,15 +55,97 @@ import org.eclipse.nebula.widgets.grid.*;
 public class ProcessView extends ViewPart implements ISelectionListener{
 
 	public static final String ID = "Auto-TestCase-generate-tool.ProcessView";
-
+	private TreeViewer viewer;
+	TreeItem input;
+	TreeItem preCon;
+	TreeItem output;
 	/**
 	 * The text control that's displaying the content of the email message.
 	 */
 	public static String requirementID = "R1.1";
 	private Label requireID ;
+	private Requirement root;
+	Tree tree;
+	
+	class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider{
+
+		@Override
+		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
+		}
+
+		@Override
+		public void dispose() {
+		}
+
+		@Override
+		public Object[] getElements(Object parent) {
+			return getChildren(parent);
+		}
+
+		@Override
+		public Object getParent(Object child) {
+			if (child instanceof Variables) {
+				return ((Variables)child).getParent();
+			}
+			if (child instanceof String) {
+				return root;
+			}
+			return null;
+		}
+
+		@Override
+		public Object[] getChildren(Object parent) {
+			if (parent instanceof String) {
+				if(parent.equals("Pre")) {
+					root.getPreConVars();
+				}else if(parent.equals("Input")) {
+					root.getInputVars();
+				}else if(parent.equals("Output")) {
+					root.getOutputVars();
+				}
+			}
+			if (parent instanceof Requirement) {
+				return new String[]{"Pre","Input","Output"};
+			}
+			return new Object[0];
+		}
+
+		@Override
+		public boolean hasChildren(Object parent) {
+			if (parent instanceof Requirement)
+				return true;
+			if (parent instanceof String) {
+				if(parent.equals("Pre")) {
+					root.hasVars(1);
+				}else if(parent.equals("Input")) {
+					root.hasVars(2);
+				}else if(parent.equals("Output")) {
+					root.hasVars(3);
+				}
+				
+			}
+				
+			return false;
+		}
+
+	}
+
+	class ViewLabelProvider extends LabelProvider {
+
+		@Override
+		public String getText(Object obj) {
+			return obj.toString();
+		}
+
+	
+	}
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		Composite top = new Composite(parent, SWT.NONE);
+		
+		
+		
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 2;
 		layout.marginWidth = 2;
@@ -118,13 +216,13 @@ public class ProcessView extends ViewPart implements ISelectionListener{
 		rangeColumn.setWidth(200);
 		rangeColumn.setText("range");
 		
-		TreeItem input = new TreeItem(tree, SWT.NONE);
+		input = new TreeItem(tree, SWT.NONE);
 		input.setText(new String[] {"Input","","",""});
 		
-		TreeItem preCon = new TreeItem(tree, SWT.NONE);
+		preCon = new TreeItem(tree, SWT.NONE);
 		preCon.setText(new String[] {"Pre-Condition","","",""});
 		
-		TreeItem output = new TreeItem(tree, SWT.NONE);
+		output = new TreeItem(tree, SWT.NONE);
 		output.setText(new String[] {"output","","",""});
 		
 		TreeItem i1 = new TreeItem(input, SWT.NONE);
@@ -152,7 +250,7 @@ public class ProcessView extends ViewPart implements ISelectionListener{
 		output.setExpanded(true);
 		input.setExpanded(true);
 		preCon.setExpanded(true);
-		
+//		
 		getSite().getPage().addSelectionListener((ISelectionListener) this);
 	
 	}
@@ -170,9 +268,34 @@ public class ProcessView extends ViewPart implements ISelectionListener{
 
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		ConsoleHandler.info("process detetct change\n");
 		if(selection!= null){
-			requireID.setText(selection.toString());
+			IStructuredSelection is = (IStructuredSelection)selection;
+			if(is.getFirstElement() instanceof Requirement) {
+				
+				root = (Requirement)is.getFirstElement();
+				ConsoleHandler.info(root.getRequirementId());
+				requireID.setText(root.getRequirementName());
+				
+				input.removeAll();
+				preCon.removeAll();
+				output.removeAll();
+				
+				for (Variables Var : root.getInputVars()) {
+					TreeItem in = new TreeItem(input, SWT.NONE);
+					in.setText(new String[] {Var.getVariablesName(),Var.getVariablesTypeID()+"","--","--"});
+				}
+				
+				for (Variables Var : root.getOutputVars()) {
+					TreeItem in = new TreeItem(output, SWT.NONE);
+					in.setText(new String[] {Var.getVariablesName(),Var.getVariablesTypeID()+"","--","--"});
+				}
+				
+				for (Variables Var : root.getPreConVars()) {
+					TreeItem in = new TreeItem(preCon, SWT.NONE);
+					in.setText(new String[] {Var.getVariablesName(),Var.getVariablesTypeID()+"","--","--"});
+				}
+				
+			}
 		}
 	}
 	@Override

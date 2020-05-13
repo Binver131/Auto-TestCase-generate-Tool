@@ -27,6 +27,11 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import entity.DataBase;
+import entity.Model;
+import entity.Requirement;
+import jdbc.ConnectHelper;
+
 /**
  * 
  * @author 汪文轩
@@ -40,49 +45,7 @@ public class NavigationView extends ViewPart {
 	   private MenuManager fMenuMgr; 
 	   private Menu fMenu; 
 
-	class TreeObject {
-		private String name;
-		private TreeParent parent;
-
-		public TreeObject(String name) {
-			this.name = name;
-		}
-		public String getName() {
-			return name;
-		}
-		public void setParent(TreeParent parent) {
-			this.parent = parent;
-		}
-		public TreeParent getParent() {
-			return parent;
-		}
-		public String toString() {
-			return getName();
-		}
-	}
-
-	class TreeParent extends TreeObject {
-		private List<TreeObject> children;
-		public TreeParent(String name) {
-			super(name);
-			children = new ArrayList<>();
-		}
-		public void addChild(TreeObject child) {
-			children.add(child);
-			child.setParent(this);
-		}
-		public void removeChild(TreeObject child) {
-			children.remove(child);
-			child.setParent(null);
-		}
-		public TreeObject[] getChildren() {
-			return (TreeObject[]) children.toArray(new TreeObject[children.size()]);
-		}
-		public boolean hasChildren() {
-			return children.size()>0;
-		}
-	}
-
+	
 	class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider{
 
 		@Override
@@ -100,24 +63,32 @@ public class NavigationView extends ViewPart {
 
 		@Override
 		public Object getParent(Object child) {
-			if (child instanceof TreeObject) {
-				return ((TreeObject)child).getParent();
+			if (child instanceof Model) {
+				return ((Model)child).getParent();
+			}
+			if (child instanceof Requirement) {
+				return ((Requirement)child).getParent();
 			}
 			return null;
 		}
 
 		@Override
 		public Object[] getChildren(Object parent) {
-			if (parent instanceof TreeParent) {
-				return ((TreeParent)parent).getChildren();
+			if (parent instanceof DataBase) {
+				return ((DataBase)parent).getChildren();
+			}
+			if (parent instanceof Model) {
+				return ((Model)parent).getChildren();
 			}
 			return new Object[0];
 		}
 
 		@Override
 		public boolean hasChildren(Object parent) {
-			if (parent instanceof TreeParent)
-				return ((TreeParent)parent).hasChildren();
+			if (parent instanceof DataBase)
+				return ((DataBase)parent).hasChildren();
+			if (parent instanceof Model)
+				return ((Model)parent).hasChildren();
 			return false;
 		}
 
@@ -133,32 +104,20 @@ public class NavigationView extends ViewPart {
 		@Override
 		public Image getImage(Object obj) {
 			String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
-			if (obj instanceof TreeParent)
+			if (obj instanceof Model)
 				imageKey = ISharedImages.IMG_OBJ_FOLDER;
+			
 			return PlatformUI.getWorkbench().getSharedImages().getImage(imageKey);
 		}
 	}
 
 	/**
-	 * We will set up a dummy model to initialize tree heararchy. In real
+	 * We will set up a dummy model to initialize tree hierarchy. In real
 	 * code, you will connect to a real model and expose its hierarchy.
 	 */
-	private TreeObject createDummyModel() {
-		TreeObject to1 = new TreeObject("R1.1");
-		TreeObject to2 = new TreeObject("R1.2");
-		TreeObject to3 = new TreeObject("R1.3");
-		TreeParent p1 = new TreeParent("预警系统需求（V1.1）");
-		p1.addChild(to1);
-		p1.addChild(to2);
-		p1.addChild(to3);
-
-		TreeObject to4 = new TreeObject("R2.1");
-		TreeParent p2 = new TreeParent("EICAS需求");
-		p2.addChild(to4);
-
-		TreeParent root = new TreeParent("");
-		root.addChild(p1);
-		root.addChild(p2);
+	private DataBase initDataBase() {
+		DataBase root = ConnectHelper.connectHelper("hello");
+		
 		return root;
 	}
 
@@ -175,7 +134,7 @@ public class NavigationView extends ViewPart {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
-		viewer.setInput(createDummyModel());		
+		viewer.setInput(initDataBase());		
 		
 		hookContextMenu();
 		

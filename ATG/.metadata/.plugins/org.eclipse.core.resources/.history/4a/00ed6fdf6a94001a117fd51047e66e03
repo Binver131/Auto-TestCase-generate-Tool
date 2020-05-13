@@ -1,0 +1,236 @@
+package autotestcasegeneratetool;
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.part.ViewPart;
+
+import entity.DataForm;
+import entity.NewTestCase;
+import entity.Requirement;
+import entity.TestCase;
+import entity.Variables;
+import jdbc.ConnectHelper;
+import jdbc.Handle;
+
+import org.eclipse.nebula.widgets.grid.*;
+
+
+/**
+ * 
+ * @author 汪文轩
+ * 
+ * 这里是右边的表格界面
+ *
+ */
+public class View extends ViewPart implements ISelectionListener{
+
+	public static final String ID = "Auto-TestCase-generate-tool.view";
+
+	/**
+	 * The text control that's displaying the content of the email message.
+	 */
+	private Label requireID ;
+	private Grid grid;
+	private GridColumnGroup outputColumnGroup;
+	private GridColumnGroup inputColumnGroup;
+	private GridColumnGroup preColumnGroup;
+	private GridColumn IDColumn;
+	private GridColumn evaColumn;
+	private Font font = new Font(Display.getDefault(), "宋体", 15, SWT.NONE);
+	@Override
+	public void createPartControl(Composite parent) {
+		//ConnectHelper.connectHelper();
+		Composite top = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 2;
+		layout.marginWidth = 2;
+		top.setLayout(layout);
+		// top banner
+		Composite banner = new Composite(top, SWT.NONE);
+		banner.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL, GridData.VERTICAL_ALIGN_BEGINNING, true, false));
+		layout = new GridLayout();
+		layout.marginHeight = 5;
+		layout.marginWidth = 10;
+		layout.numColumns = 2;
+		banner.setLayout(layout);
+		getSite().getPage().addSelectionListener((ISelectionListener) this);
+		
+		
+		
+		// setup bold font
+		Font boldFont = JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT);    
+		
+		Label l = new Label(banner, SWT.NONE);
+		l.setText("需求:");
+		l.setFont(boldFont);
+		l.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
+		
+		requireID = new Label(banner, SWT.WRAP);
+		requireID.setText("");
+		requireID.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false));
+		
+		l = new Label(banner, SWT.NONE);
+		l.setText("数量:");
+		l.setFont(boldFont);
+		l.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
+    
+		final Link link = new Link(banner, SWT.NONE);
+		link.setText("3");
+		link.addSelectionListener(new SelectionAdapter() {    
+			public void widgetSelected(SelectionEvent e) {
+				MessageDialog.openInformation(getSite().getShell(), "Not Implemented", "Imagine the address book or a new message being created now.");
+			}    
+		});
+		link.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false));
+    
+		l = new Label(banner, SWT.NONE);
+		l.setText("Date:");
+		l.setFont(boldFont);
+		l.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
+		
+		l = new Label(banner, SWT.WRAP);
+		l.setText("2020-04-09 10:34:23");
+		l.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false));
+
+		//表格开始
+		
+		grid = new Grid(top,SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		grid.setLayoutData(new GridData(GridData.FILL_BOTH));
+		grid.setHeaderVisible(true);
+		IDColumn=new GridColumn(grid, SWT.NONE);
+		IDColumn.setText("用例标识");
+		IDColumn.setWidth(200);
+		IDColumn.setHeaderFont(font);
+		preColumnGroup=new GridColumnGroup(grid, SWT.NONE);
+		preColumnGroup.setText("先决条件");
+		GridColumn pre = new GridColumn(preColumnGroup, SWT.NONE);
+		pre.setText(" ");
+		pre.setWidth(100);
+		inputColumnGroup=new GridColumnGroup(grid, SWT.NONE);
+		inputColumnGroup.setText("输入变量");
+		
+		GridColumn in = new GridColumn(inputColumnGroup, SWT.NONE);
+		in.setText(" ");
+		in.setWidth(100);
+		
+		outputColumnGroup=new GridColumnGroup(grid, SWT.NONE);
+		outputColumnGroup.setText("预期结果");
+		GridColumn out = new GridColumn(outputColumnGroup, SWT.NONE);
+		out.setText(" ");
+		out.setWidth(100);
+		
+		evaColumn = new GridColumn(grid, SWT.NONE);
+		evaColumn.setText("评价准则");
+		evaColumn.setHeaderFont(font);
+		evaColumn.setWidth(200);
+	
+	}
+
+	@Override
+	public void addPartPropertyListener(IPropertyChangeListener listener) {
+		super.addPartPropertyListener(listener);
+	}
+
+	@Override
+	public void setFocus() {
+		return;
+	}
+
+	@Override
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		if(selection!= null){
+			IStructuredSelection is = (IStructuredSelection)selection;
+			grid.clearItems();
+			
+			for(GridColumn colum: outputColumnGroup.getColumns()) {
+				colum.dispose();
+			}
+			for(GridColumn colum: inputColumnGroup.getColumns()) {
+				colum.dispose();
+			}
+			for(GridColumn colum: preColumnGroup.getColumns()) {
+				colum.dispose();
+			}
+			
+			
+			if(is.getFirstElement() instanceof Requirement) {
+				ConsoleHandler.info("detetct change\n");
+				Requirement requirement = (Requirement)is.getFirstElement();
+				requireID.setText(requirement.getRequirementName());
+				
+				for (Variables Var : requirement.getInputVars()) {
+					GridColumn in = new GridColumn(inputColumnGroup, SWT.NONE);
+					in.setText(Var.getVariablesName());
+					in.setHeaderFont(font);
+					in.setWidth(Var.getVariablesName().length()*20);
+				}
+				
+				for (Variables Var : requirement.getPreConVars()) {
+					GridColumn in = new GridColumn(preColumnGroup, SWT.NONE);
+					in.setText(Var.getVariablesName());
+					in.setHeaderFont(font);
+					
+					in.setWidth(Var.getVariablesName().length()*20);
+				}
+				
+				for (Variables Var : requirement.getOutputVars()) {
+					GridColumn in = new GridColumn(outputColumnGroup, SWT.NONE);
+					in.setText(Var.getVariablesName());
+					in.setHeaderFont(font);
+					in.setWidth(Var.getVariablesName().length()*20);
+				}
+				
+				for(TestCase testcase:requirement.getTestcases()) {
+					int columnCount = 1;
+					GridItem item = new GridItem(grid, SWT.NONE);
+					
+					item.setText(testcase.getTestcaseID()+"");
+					item.setText(columnCount++,testcase.getTestcaseEvaluate());
+					
+					for(String var:testcase.getTestcaseInput().split(",")) {
+						
+						item.setText(columnCount++,var);
+					}
+					
+					for(String var:testcase.getTestcaseCondition().split(",")) {
+						
+						item.setText(columnCount++,var);
+					}
+					
+					for(String var:testcase.getTestcaseOutput().split(",")) {
+						
+						item.setText(columnCount++,var);
+					}
+					
+				}
+				
+				
+
+			}
+			
+			
+		}
+	}
+	
+	
+}

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="org.eclipse.core.commands.AbstractHandler"/>
+<fullyQualifiedTypeName name="jdbc.ConnectHelper"/>
+<fullyQualifiedTypeName name="entity.DataBase"/>
+<fullyQualifiedTypeName name="entity.Model"/>
+<fullyQualifiedTypeName name="entity.ModelClassEnum"/>
+<fullyQualifiedTypeName name="java.lang.Integer"/>
+<fullyQualifiedTypeName name="java.lang.Boolean"/>
+<fullyQualifiedTypeName name="entity.Variables"/>
+<fullyQualifiedTypeName name="entity.Requirement"/>
+<fullyQualifiedTypeName name="entity.TestCase"/>
+<fullyQualifiedTypeName name="org.eclipse.nebula.widgets.grid.GridItem"/>
+<fullyQualifiedTypeName name="org.eclipse.swt.graphics.Font"/>
+<fullyQualifiedTypeName name="org.eclipse.swt.widgets.Display"/>
+<fullyQualifiedTypeName name="org.eclipse.swt.graphics.GC"/>
+<fullyQualifiedTypeName name="java.util.Date"/>
+<fullyQualifiedTypeName name="org.eclipse.swt.widgets.FileDialog"/>
+<fullyQualifiedTypeName name="org.eclipse.swt.SWT"/>
+<fullyQualifiedTypeName name="java.io.File"/>
+<fullyQualifiedTypeName name="autotestcasegeneratetool.ConsoleHandler"/>
+</qualifiedTypeNameHistroy>

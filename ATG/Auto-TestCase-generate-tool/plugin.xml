@@ -24,7 +24,7 @@
       <view
             allowMultiple="false"
             class="autotestcasegeneratetool.View"
-            icon="platform:/plugin/org.eclipse.jdt.junit/icons/full/obj16/test.png"
+            icon="platform:/plugin/org.eclipse.ui.intro.universal/icons/full/elcl16/configure.png"
             id="Auto-TestCase-generate-tool.view"
             inject="true"
             name="测试用例集"
@@ -76,8 +76,8 @@
             name="打开">
       </command>
       <command
-            id="Auto-TestCase-generate-tool.inport"
-            name="导入需求">
+            id="Auto-TestCase-generate-tool.importCommand"
+            name="导入">
       </command>
       <command
             id="Auto-TestCase-generate-tool.helpCommand"
@@ -166,7 +166,7 @@
             </command>
             <command
                   commandId="Auto-TestCase-generate-tool.openCommand"
-                  icon="platform:/plugin/org.eclipse.pde.ui/icons/obj16/open_artifact_obj.png"
+                  icon="platform:/plugin/org.eclipse.jdt.ui/icons/full/etool16/opentype.png"
                   label="打开"
                   style="push">
             </command>
@@ -393,6 +393,10 @@
       <handler
             class="org.eclipse.ui.internal.handlers.HelpContentsHandler"
             commandId="Auto-TestCase-generate-tool.helpCommand">
+      </handler>
+      <handler
+            class="handlers.importHandler"
+            commandId="Auto-TestCase-generate-tool.importCommand">
       </handler>
    </extension>
 
