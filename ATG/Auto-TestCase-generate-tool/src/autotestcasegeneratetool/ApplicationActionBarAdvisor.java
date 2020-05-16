@@ -18,6 +18,8 @@ import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 
+import views.TestCasesView;
+
 /**
  * An action bar advisor is responsible for creating, adding, and disposing of the
  * actions added to a workbench window. Each window will be populated with
@@ -60,7 +62,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         newWindowAction = ActionFactory.OPEN_NEW_WINDOW.create(window);
         register(newWindowAction);
         
-        openViewAction = new OpenViewAction(window, "Open Another Message View", View.ID);
+        openViewAction = new OpenViewAction(window, "Open Another Message TestCasesView", TestCasesView.ID);
         register(openViewAction);
         
         messagePopupAction = new MessagePopupAction("Open Message", window);
