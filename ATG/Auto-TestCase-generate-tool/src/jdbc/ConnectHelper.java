@@ -21,7 +21,7 @@ public class ConnectHelper {
 	public static List<TestCase> testcaseList = new ArrayList<>();
 	public static List<Variables> variableList = new ArrayList<>();
 	
-    public static DataBase connectHelper(String str) {
+    public static DataBase connectHelper() {
     	DataBase database = new DataBase();
         // 声明Connection对象
         Connection con;
@@ -42,14 +42,7 @@ public class ConnectHelper {
             if (!con.isClosed())
                 System.out.println("成功以 " + user + " 身份连接到数据库");
  
-            // 2.创建statement类对象，用来执行SQL语句！！
-            // 要执行的SQL语句
-            String sql1 = "select * from typetable";
-            
-            String sql3 = "select * from testcasetable";
-            String sql4 = "select * from variablestable";
-            String sql5 = "select * from testcasetable where testcase_requirementid = '"+str+"'";
-            // 3.ResultSet类，用来存放获取的结果集！！
+            // 2.ResultSet类，用来存放获取的结果集！！
             Statement statement = con.createStatement();
             String getModelTable = "select * from models";
             ResultSet rs = statement.executeQuery(getModelTable);

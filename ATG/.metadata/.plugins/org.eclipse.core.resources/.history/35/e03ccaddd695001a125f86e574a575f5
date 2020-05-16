@@ -1,0 +1,19 @@
+/**  
+* @Title: ManualDesignView.java  
+* @Package views  
+* @Description: TODO(用一句话描述该文件做什么)  
+* @author Binver131  
+* @date 2020年5月14日  
+* @version V1.0  
+*/  
+package views;
+
+/**  
+* @ClassName: ManualDesignView  
+* @Description: TODO(手动设计界面视图)  
+* @author Binver131  
+* @date 2020年5月14日    
+*/
+public class ManualDesignView {
+
+}

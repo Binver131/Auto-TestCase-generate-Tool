@@ -21,12 +21,12 @@ import java.util.List;
  */
 public class Model {
 	private DataBase parent;
-	private String dbId;//数据库中的主键
+	private String dbId;				//数据库中的主键
 	private String ID;
 	private String name;
-	private String modelClass;
+	private String modelClass;			//需求模型等级
 	private String text;
-	private List<Requirement> children;
+	private List<Requirement> children;//需求表
 	public Model(String ID) {
 		this.ID = ID;
 		children = new ArrayList<>();

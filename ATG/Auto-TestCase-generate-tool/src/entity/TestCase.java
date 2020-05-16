@@ -1,13 +1,19 @@
 package entity;
-
+/**
+ * 
+* @ClassName: TestCase  
+* @Description: TODO(用于保存测试用例数据)  
+* @author 张漾  
+* @date 2020年5月14日
+ */
 public class TestCase {
-	private int testcaseID;
-	private String testcaseRequirementID;
-	private String testcaseCondition;
-	private String testcaseInput;
-	private String testcaseOutput;
-	private String testcaseEvaluate;
-	private String testcaseType;
+	private int testcaseID;					//测试用例ID
+	private String testcaseRequirementID;	//测试用例所对应的需求ID	
+	private String testcaseCondition;		//测试用例前置条件的值
+	private String testcaseInput;			//测试用例输入变量的值
+	private String testcaseOutput;			//测试用例输出变量的值
+	private String testcaseEvaluate;		//测试用例所适用的评价准则
+	private String testcaseType;			//测试用例类型
 	public int getTestcaseID() {
 		return testcaseID;
 	}

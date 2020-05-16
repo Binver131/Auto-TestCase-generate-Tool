@@ -1,9 +1,16 @@
 package entity;
 
+/**
+ * 
+* @ClassName: Type  
+* @Description: TODO(用于保存类型数据)  
+* @author Binver131  
+* @date 2020年5月14日
+ */
 public class Type {
-	private int typeID;
-	private String typename;
-	private String typerange;
+	private int typeID;			//类型ID号
+	private String typename;	//类型名称
+	private String typerange;	//类型名
 	public int getTypeID() {
 		return typeID;
 	}

@@ -1,0 +1,44 @@
+/**  
+* @Title: ManualDesignHandler.java  
+* @Package handlers  
+* @Description: TODO(用一句话描述该文件做什么)  
+* @author Binver131  
+* @date 2020年5月14日  
+* @version V1.0  
+*/  
+package handlers;
+
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+
+import views.ManualDesignView;
+
+
+
+/**  
+* @ClassName: ManualDesignHandler  
+* @Description: TODO(这里用一句话描述这个类的作用)  
+* @author Binver131  
+* @date 2020年5月14日    
+*/
+public class ManualDesignHandler extends AbstractHandler{
+
+	@Override
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		// TODO Auto-generated method stub
+		try {
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ManualDesignView.ID, 0+"", IWorkbenchPage.VIEW_ACTIVATE);
+		} catch (PartInitException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+
+
+}

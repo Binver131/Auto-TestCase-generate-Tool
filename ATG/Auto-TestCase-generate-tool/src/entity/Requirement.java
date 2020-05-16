@@ -11,18 +11,15 @@ import java.util.List;
 * @date 2020年5月12日
  */
 public class Requirement {
-	private String dbId;//数据库中的主键
-	private String requirementId;
-	private String requirementName;
-	private String requirementText;
-	private String requirementCondition;
-	private String requirementInput;
-	private String requirementOutput;
-	private Model model;
-	private List<Variables> preConditionVars;
-	private List<Variables> inputVars;
-	private List<Variables> outputVars;
-	private List<TestCase> testcases;
+	private String dbId;				//数据库中的主键
+	private String requirementId;		//需求标识符
+	private String requirementName;		//需求名称
+	private String requirementText;		//需求描述文本
+	private Model model;				//需求所属的需求模型
+	private List<Variables> preConditionVars;	//前置条件变量列表
+	private List<Variables> inputVars;			//输入变量列表
+	private List<Variables> outputVars;			//输出变量列表
+	private List<TestCase> testcases;			//测试用例列表
 	public Requirement() {
 		preConditionVars = new ArrayList<>();
 		inputVars = new ArrayList<>();
@@ -98,24 +95,10 @@ public class Requirement {
 	public void setRequirementText(String requirementText) {
 		this.requirementText = requirementText;
 	}
-	public String getRequirementCondition() {
-		return requirementCondition;
-	}
-	public void setRequirementCondition(String requirementCondition) {
-		this.requirementCondition = requirementCondition;
-	}
-	public String getRequirementInput() {
-		return requirementInput;
-	}
-	public void setRequirementInput(String requirementInput) {
-		this.requirementInput = requirementInput;
-	}
-	public String getRequirementOutput() {
-		return requirementOutput;
-	}
-	public void setRequirementOutput(String requirementOutput) {
-		this.requirementOutput = requirementOutput;
-	}
+	
+	/**
+	 * 树形结构时需要回调此函数来生成标签文本
+	 */
 	@Override
 	public String toString() {
 		return requirementName;

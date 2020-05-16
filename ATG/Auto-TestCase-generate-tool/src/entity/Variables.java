@@ -1,12 +1,17 @@
 package entity;
 
-import java.util.List;
-
+/**
+ * 
+* @ClassName: Variables  
+* @Description: TODO(用于保存变量信息)  
+* @author 张漾  
+* @date 2020年5月14日
+ */
 public class Variables {
-	private int variablesID;
-	private String variablesName;
-	private int variablesTypeID;
-	private String Type;
+	private int variablesID; 		//变量ID
+	private String variablesName;	//变量名称
+	private int variablesTypeID;	//变量类型ID
+	private String Type;			//变量在需求在位于什么位置{前置条件，输入变量，输出变量}
 	public int getVariablesID() {
 		return variablesID;
 	}
