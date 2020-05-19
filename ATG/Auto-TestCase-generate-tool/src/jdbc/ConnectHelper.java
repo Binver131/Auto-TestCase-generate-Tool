@@ -46,6 +46,20 @@ public class ConnectHelper {
             Statement statement = con.createStatement();
             String getModelTable = "select * from models";
             ResultSet rs = statement.executeQuery(getModelTable);
+            
+            
+            String sql1 = "select * from typetable";
+            Statement st1=con.createStatement();
+            ResultSet rs1 = st1.executeQuery(sql1);
+            while(rs1.next()) {
+            	Type type = new Type();
+            	type.setModelid(rs1.getInt("model"));
+            	type.setSizeString(rs1.getString("size"));
+            	type.setTypeID(rs1.getInt("type_id"));
+            	type.setTypename(rs1.getString("type_name"));
+            	type.setTyperange(rs1.getString("type_range"));
+            	typeList.add(type);
+            }
 
             //¥¥Ω®DataBase¿‡
             while (rs.next()) {
