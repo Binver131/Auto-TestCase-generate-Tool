@@ -11,6 +11,20 @@ public class Type {
 	private int typeID;			//类型ID号
 	private String typename;	//类型名称
 	private String typerange;	//类型名
+	private int modelid;
+	private String sizeString;
+	public int getModelid() {
+		return modelid;
+	}
+	public void setModelid(int modelid) {
+		this.modelid = modelid;
+	}
+	public String getSizeString() {
+		return sizeString;
+	}
+	public void setSizeString(String sizeString) {
+		this.sizeString = sizeString;
+	}
 	public int getTypeID() {
 		return typeID;
 	}

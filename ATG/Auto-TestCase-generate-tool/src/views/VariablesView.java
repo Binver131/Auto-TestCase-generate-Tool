@@ -27,7 +27,9 @@ import org.eclipse.ui.part.ViewPart;
 
 import console.ConsoleHandler;
 import entity.Requirement;
+import entity.Type;
 import entity.Variables;
+import jdbc.ConnectHelper;
 
 
 /**
@@ -262,17 +264,52 @@ public class VariablesView extends ViewPart implements ISelectionListener{
 				
 				for (Variables Var : root.getInputVars()) {
 					TreeItem in = new TreeItem(input, SWT.NONE);
-					in.setText(new String[] {Var.getVariablesName(),Var.getVariablesTypeID()+"","--","--"});
+					String tp="";
+					String sz="";
+					String range="";
+					for(Type type:ConnectHelper.typeList) {
+						if(Var.getVariablesTypeID()==type.getTypeID()) {
+							tp=type.getTypename();
+							sz=type.getSizeString();
+							range=type.getTyperange();
+							break;
+						}
+					}
+					in.setText(new String[] {Var.getVariablesName(),tp,sz,range});
 				}
 				
 				for (Variables Var : root.getOutputVars()) {
-					TreeItem in = new TreeItem(output, SWT.NONE);
-					in.setText(new String[] {Var.getVariablesName(),Var.getVariablesTypeID()+"","--","--"});
+					TreeItem in = new TreeItem(output, SWT.NONE);			
+					String tp="";
+					String sz="";
+					String range="";
+					for(Type type:ConnectHelper.typeList) {
+						if(Var.getVariablesTypeID()==type.getTypeID()) {
+							tp=type.getTypename();
+							sz=type.getSizeString();
+							range=type.getTyperange();
+							break;
+						}
+					}
+					in.setText(new String[] {Var.getVariablesName(),tp,sz,range});
+				
 				}
 				
 				for (Variables Var : root.getPreConVars()) {
 					TreeItem in = new TreeItem(preCon, SWT.NONE);
-					in.setText(new String[] {Var.getVariablesName(),Var.getVariablesTypeID()+"","--","--"});
+					String tp="";
+					String sz="";
+					String range="";
+					for(Type type:ConnectHelper.typeList) {
+						if(Var.getVariablesTypeID()==type.getTypeID()) {
+							tp=type.getTypename();
+							sz=type.getSizeString();
+							range=type.getTyperange();
+							break;
+						}
+					}
+					in.setText(new String[] {Var.getVariablesName(),tp,sz,range});
+				
 				}
 				
 			}
