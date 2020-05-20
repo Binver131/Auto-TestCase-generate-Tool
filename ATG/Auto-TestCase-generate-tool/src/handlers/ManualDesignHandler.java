@@ -36,8 +36,7 @@ public class ManualDesignHandler extends AbstractHandler{
 		// TODO Auto-generated method stub
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		IWorkbenchPage page = window.getActivePage();
-		page.hideView((ViewPart)page.findView(TestCasesView.ID));
-		ConsoleHandler.info("πÿ±’ ”Õº");
+		page.hideView(page.findView(TestCasesView.ID));
 		try {
 			page.showView(ManualDesignView.ID);
 		} catch (PartInitException e) {

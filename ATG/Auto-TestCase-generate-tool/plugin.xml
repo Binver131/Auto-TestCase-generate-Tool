@@ -58,6 +58,12 @@
             name="手动设计测试用例"
             restorable="true">
       </view>
+      <view
+            class="views.RowReqInfoView"
+            id="Auto-TestCase-generate-tool.RowReqInfoView"
+            name="INFO"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

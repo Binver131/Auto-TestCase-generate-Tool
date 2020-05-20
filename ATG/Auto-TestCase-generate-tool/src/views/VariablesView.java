@@ -27,6 +27,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import console.ConsoleHandler;
 import entity.Requirement;
+import entity.Type;
 import entity.Variables;
 
 
@@ -262,17 +263,20 @@ public class VariablesView extends ViewPart implements ISelectionListener{
 				
 				for (Variables Var : root.getInputVars()) {
 					TreeItem in = new TreeItem(input, SWT.NONE);
-					in.setText(new String[] {Var.getVariablesName(),Var.getVariablesTypeID()+"","--","--"});
+					Type type = root.getParent().getParent().getType(Var.getVariablesTypeID()+"");
+					in.setText(new String[] {Var.getVariablesName(),type.getTypename(),type.getSizeString(),type.getTyperange()});
 				}
 				
 				for (Variables Var : root.getOutputVars()) {
 					TreeItem in = new TreeItem(output, SWT.NONE);
-					in.setText(new String[] {Var.getVariablesName(),Var.getVariablesTypeID()+"","--","--"});
+					Type type = root.getParent().getParent().getType(Var.getVariablesTypeID()+"");
+					in.setText(new String[] {Var.getVariablesName(),type.getTypename(),type.getSizeString(),type.getTyperange()});
 				}
 				
 				for (Variables Var : root.getPreConVars()) {
 					TreeItem in = new TreeItem(preCon, SWT.NONE);
-					in.setText(new String[] {Var.getVariablesName(),Var.getVariablesTypeID()+"","--","--"});
+					Type type = root.getParent().getParent().getType(Var.getVariablesTypeID()+"");
+					in.setText(new String[] {Var.getVariablesName(),type.getTypename(),type.getSizeString(),type.getTyperange()});
 				}
 				
 			}

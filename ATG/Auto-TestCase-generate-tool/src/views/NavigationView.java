@@ -1,5 +1,9 @@
 package views;
 
+import java.util.Date;
+
+import javax.security.auth.Refreshable;
+
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -22,10 +26,12 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.SharedImages;
 import org.eclipse.ui.part.ViewPart;
 import entity.DataBase;
 import entity.Model;
 import entity.Requirement;
+import entity.RowRequirement;
 import jdbc.ConnectHelper;
 
 /**
@@ -65,6 +71,9 @@ public class NavigationView extends ViewPart {
 			if (child instanceof Requirement) {
 				return ((Requirement)child).getParent();
 			}
+			if (child instanceof RowRequirement) {
+				return ((RowRequirement)child).getParent();
+			}
 			return null;
 		}
 
@@ -76,6 +85,9 @@ public class NavigationView extends ViewPart {
 			if (parent instanceof Model) {
 				return ((Model)parent).getChildren();
 			}
+			if (parent instanceof RowRequirement) {
+				return ((RowRequirement)parent).getChildren();
+			}
 			return new Object[0];
 		}
 
@@ -85,6 +97,8 @@ public class NavigationView extends ViewPart {
 				return ((DataBase)parent).hasChildren();
 			if (parent instanceof Model)
 				return ((Model)parent).hasChildren();
+			if (parent instanceof RowRequirement)
+				return ((RowRequirement)parent).hasChildren();
 			return false;
 		}
 
@@ -101,6 +115,8 @@ public class NavigationView extends ViewPart {
 		public Image getImage(Object obj) {
 			String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
 			if (obj instanceof Model)
+				imageKey = ISharedImages.IMG_OBJS_DND_STACK_MASK;
+			else if (obj instanceof RowRequirement)
 				imageKey = ISharedImages.IMG_OBJ_FOLDER;
 			
 			return PlatformUI.getWorkbench().getSharedImages().getImage(imageKey);
@@ -115,7 +131,7 @@ public class NavigationView extends ViewPart {
 	* @throws
 	 */
 	private DataBase initDataBase() {
-		DataBase root = ConnectHelper.connectHelper();		
+		DataBase root = ConnectHelper.getDataBaseInstance();		
 		return root;
 	}
 
@@ -143,12 +159,12 @@ public class NavigationView extends ViewPart {
 				IStructuredSelection is = (IStructuredSelection)event.getSelection();
 				if( is.getFirstElement() instanceof Requirement) {
 					try {
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(TestCasesView.ID);
-						viewer.getControl().setFocus();
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(TestCasesView.ID,null,IWorkbenchPage.VIEW_VISIBLE);
 					} catch (PartInitException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					//viewer.getControl().setFocus();
 				}
 			}
 		});
@@ -172,6 +188,11 @@ public class NavigationView extends ViewPart {
 	       viewer.getControl().setMenu(fMenu); 
 	       getSite().registerContextMenu(fMenuMgr, viewer);              
 	   }    
+	
+	public void refresh() {
+		viewer.refresh();
+	}
+	
 	
 	@Override
 	public void setFocus() {

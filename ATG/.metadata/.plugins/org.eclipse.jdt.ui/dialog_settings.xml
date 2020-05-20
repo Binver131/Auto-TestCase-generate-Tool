@@ -41,8 +41,8 @@
 		</section>
 	</section>
 	<section name="RefactoringWizard.preview">
-		<item key="width" value="600"/>
-		<item key="height" value="400"/>
+		<item key="width" value="590"/>
+		<item key="height" value="390"/>
 	</section>
 	<section name="org.eclipse.ltk.ui.refactoring.settings">
 		<item key="updateSimilarElements" value="true"/>
@@ -52,10 +52,10 @@
 		<item key="patterns" value="*"/>
 	</section>
 	<section name="org.eclipse.jdt.internal.ui.preferences.EditTemplateDialog_dialogBounds">
-		<item key="DIALOG_X_ORIGIN" value="129"/>
-		<item key="DIALOG_Y_ORIGIN" value="235"/>
-		<item key="DIALOG_WIDTH" value="725"/>
-		<item key="DIALOG_HEIGHT" value="381"/>
+		<item key="DIALOG_X_ORIGIN" value="225"/>
+		<item key="DIALOG_Y_ORIGIN" value="238"/>
+		<item key="DIALOG_WIDTH" value="998"/>
+		<item key="DIALOG_HEIGHT" value="725"/>
 		<item key="DIALOG_FONT_NAME" value="1|Microsoft YaHei UI|9.0|0|WINDOWS|1|-15|0|0|0|400|0|0|0|1|0|0|0|0|Microsoft YaHei UI"/>
 	</section>
 	<section name="SelfEncapsulateFieldWizard">
