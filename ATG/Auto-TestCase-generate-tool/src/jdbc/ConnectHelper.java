@@ -311,7 +311,7 @@ public class ConnectHelper {
 		// TODO Auto-generated method stub
 		
 		
-		return false;
+		return true;
 	}
 
 	
