@@ -29,6 +29,7 @@ import console.ConsoleHandler;
 import entity.Requirement;
 import entity.Type;
 import entity.Variables;
+import jdbc.ConnectHelper;
 
 
 /**
@@ -263,20 +264,52 @@ public class VariablesView extends ViewPart implements ISelectionListener{
 				
 				for (Variables Var : root.getInputVars()) {
 					TreeItem in = new TreeItem(input, SWT.NONE);
-					Type type = root.getParent().getParent().getType(Var.getVariablesTypeID()+"");
-					in.setText(new String[] {Var.getVariablesName(),type.getTypename(),type.getSizeString(),type.getTyperange()});
+					String tp="";
+					String sz="";
+					String range="";
+					for(Type type:ConnectHelper.typeList) {
+						if(Var.getVariablesTypeID()==type.getTypeID()) {
+							tp=type.getTypename();
+							sz=type.getSizeString();
+							range=type.getTyperange();
+							break;
+						}
+					}
+					in.setText(new String[] {Var.getVariablesName(),tp,sz,range});
 				}
 				
 				for (Variables Var : root.getOutputVars()) {
-					TreeItem in = new TreeItem(output, SWT.NONE);
-					Type type = root.getParent().getParent().getType(Var.getVariablesTypeID()+"");
-					in.setText(new String[] {Var.getVariablesName(),type.getTypename(),type.getSizeString(),type.getTyperange()});
+					TreeItem in = new TreeItem(output, SWT.NONE);			
+					String tp="";
+					String sz="";
+					String range="";
+					for(Type type:ConnectHelper.typeList) {
+						if(Var.getVariablesTypeID()==type.getTypeID()) {
+							tp=type.getTypename();
+							sz=type.getSizeString();
+							range=type.getTyperange();
+							break;
+						}
+					}
+					in.setText(new String[] {Var.getVariablesName(),tp,sz,range});
+				
 				}
 				
 				for (Variables Var : root.getPreConVars()) {
 					TreeItem in = new TreeItem(preCon, SWT.NONE);
-					Type type = root.getParent().getParent().getType(Var.getVariablesTypeID()+"");
-					in.setText(new String[] {Var.getVariablesName(),type.getTypename(),type.getSizeString(),type.getTyperange()});
+					String tp="";
+					String sz="";
+					String range="";
+					for(Type type:ConnectHelper.typeList) {
+						if(Var.getVariablesTypeID()==type.getTypeID()) {
+							tp=type.getTypename();
+							sz=type.getSizeString();
+							range=type.getTyperange();
+							break;
+						}
+					}
+					in.setText(new String[] {Var.getVariablesName(),tp,sz,range});
+				
 				}
 				
 			}

@@ -8,292 +8,183 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mysql.jdbc.PreparedStatement;
-
 import entity.DataBase;
 import entity.Model;
 import entity.Requirement;
-import entity.RowRequirement;
 import entity.TestCase;
 import entity.Type;
 import entity.Variables;
-/**
- * 
-* @ClassName: ConnectHelper  
-* @Description: TODO(单例模式，获取和修改database)  
-* @author Binver131  
-* @date 2020年5月19日
- */
+ 
 public class ConnectHelper {
-	//模型库
-	private static DataBase database = null;
-	//数据库连接
-	private static Connection con;
-	// 驱动程序名
-	private final static String driver = "com.mysql.jdbc.Driver";
-	// URL指向要访问的数据库名 test
-	private final static String url = "jdbc:mysql://localhost:3306/atg?useSSL=false&allowPublicKeyRetrieval=true";
-	// MySQL配置时的用户名
-	private final static String user = "root";
-	// MySQL配置时的密码
-	private final static String password = "123456789";
+	public static List<Type> typeList = new ArrayList<>();
+	public static List<Requirement> requirementList = new ArrayList<>();
+	public static List<TestCase> testcaseList = new ArrayList<>();
+	public static List<Variables> variableList = new ArrayList<>();
 	
-	/**
-	 * 
-	* 私有化构造函数，让它不能实例化
-	 */
-	private ConnectHelper() {}
-	/**
-	 * 
-	* @Title: getDataBaseInstance  
-	* @Description: TODO(这里用一句话描述这个方法的作用)  
-	* @return   参数  
-	* @return DataBase    返回类型  
-	* @throws
-	 */
-	public static DataBase getDataBaseInstance() {
-		if(database == null) {
-			initCon();
-			initDataBase();			 
-		}
-		return database;
-	}
-	
-	
-	private static void initCon() {
-		if(con != null)
-			return;
-		try {
-			Class.forName(driver);
-			con = DriverManager.getConnection(url, user, password);
-			if (!con.isClosed())
-				System.out.println("成功以 " + user + " 身份连接到数据库");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	
-	public static void initDataBase() {
-		database = new DataBase();
-		
-		// 遍历查询结果集
-		try {
-			// 加载驱动程序
-			
+    public static DataBase connectHelper() {
+    	DataBase database = new DataBase();
+        // 声明Connection对象
+        Connection con;
+        // 驱动程序名
+        String driver = "com.mysql.jdbc.Driver";
+        // URL指向要访问的数据库名 test
+        String url = "jdbc:mysql://localhost:3306/atg?useSSL=false&allowPublicKeyRetrieval=true";
+        // MySQL配置时的用户名
+        String user = "root";
+        // MySQL配置时的密码
+        String password = "123456789";
+        // 遍历查询结果集
+        try {
+            // 加载驱动程序
+            Class.forName(driver);
+            // 1.getConnection()方法，连接MySQL数据库！！
+            con = DriverManager.getConnection(url, user, password);
+            if (!con.isClosed())
+                System.out.println("成功以 " + user + " 身份连接到数据库");
+ 
+            // 2.ResultSet类，用来存放获取的结果集！！
+            Statement statement = con.createStatement();
+            String getModelTable = "select * from models";
+            ResultSet rs = statement.executeQuery(getModelTable);
+            
+            
+            String sql1 = "select * from typetable";
+            Statement st1=con.createStatement();
+            ResultSet rs1 = st1.executeQuery(sql1);
+            while(rs1.next()) {
+            	Type type = new Type();
+            	type.setModelid(rs1.getInt("model"));
+            	type.setSizeString(rs1.getString("size"));
+            	type.setTypeID(rs1.getInt("type_id"));
+            	type.setTypename(rs1.getString("type_name"));
+            	type.setTyperange(rs1.getString("type_range"));
+            	typeList.add(type);
+            }
 
-			// 2.ResultSet类，用来存放获取的结果集！！
-			Statement statement = con.createStatement();
-			String getModelTable = "select * from models";
-			ResultSet rs = statement.executeQuery(getModelTable);
-			   
-			// 创建DataBase类
-			while (rs.next()) {
-				Model model = new Model(rs.getString("model_id"));
-				model.setDbId(rs.getString("No"));
-				model.setName(rs.getString("model_name"));
-				model.setText(rs.getString("model_text"));
-				model.setModelClass(rs.getString("Model_Class"));
-				System.out.println(model.getName());
-
-				//提取类型表
-				String sql1 = "select * from typetable";
-	            Statement st1=con.createStatement();
-	            ResultSet rs1 = st1.executeQuery(sql1);
-	            while(rs1.next()) {
-	            	Type type = new Type();
-	            	type.setModelID(rs1.getString("model"));
-	            	type.setSizeString(rs1.getString("size"));
-	            	type.setTypeID(rs1.getString("type_id"));
-	            	type.setTypename(rs1.getString("type_name"));
-	            	type.setTyperange(rs1.getString("type_range"));
-	            	model.addType(type);
-	            }
-				
-				
-				// 提取原始需求类
-				String rowReqSql = "select * from rowrequirement where model=" + rs.getString("No");
-				Statement rowRequireStatement = con.createStatement();
-				ResultSet rowRequirementResult = rowRequireStatement.executeQuery(rowReqSql);
-				while (rowRequirementResult.next()) {
-					RowRequirement rowRequirement = new RowRequirement();
-					rowRequirement.setDbId(rowRequirementResult.getString("No"));
-					rowRequirement.setName(rowRequirementResult.getString("Name"));
-					rowRequirement.setContent(rowRequirementResult.getString("content"));
-
-					String reqSql = "select * from requirementtable where RowRequirement="
-							+ rowRequirementResult.getString("No");
-					Statement requireStatement = con.createStatement();
-					ResultSet requirementResult = requireStatement.executeQuery(reqSql);
-					while (requirementResult.next()) {
-						Requirement requirement = new Requirement();
-						requirement.setDbId(requirementResult.getString("No"));
-						requirement.setParent(rowRequirement);
-						requirement.setRequirementId(requirementResult.getString("requirement_id"));
-						requirement.setRequirementName(requirementResult.getString("requirement_name"));
-						requirement.setRequirementText(requirementResult.getString("requirement_text"));
-						String[] preConditionVars = requirementResult.getString("requirement_condition").split(",");
-						String[] inputVars = requirementResult.getString("requirement_input").split(",");
-						String[] outputVars = requirementResult.getString("requirement_output").split(",");
-						for (String ID : preConditionVars) {
-
-							String preConStr = "select * from variablestable where variables_id=" + ID;
-							Statement preConVarsStatement = con.createStatement();
-							ResultSet result = preConVarsStatement.executeQuery(preConStr);
-							Variables var = new Variables();
-							while (result.next()) {
-
-								var.setVariablesID(Integer.parseInt(ID, 10));
-								var.setVariablesName(result.getString("variables_name"));
-								var.setVariablesTypeID(result.getInt("variables_type"));
-							}
-
-							requirement.addPreConVar(var);
-							preConVarsStatement.close();
-						}
-
-						for (String ID : inputVars) {
-
-							String inputStr = "select * from variablestable where variables_id=" + ID;
-							Statement inputStatement = con.createStatement();
-							ResultSet result = inputStatement.executeQuery(inputStr);
-							Variables var = new Variables();
-							while (result.next()) {
-
-								var.setVariablesID(Integer.parseInt(ID, 10));
-								var.setVariablesName(result.getString("variables_name"));
-								var.setVariablesTypeID(result.getInt("variables_type"));
-							}
-
-							requirement.addInputVar(var);
-							inputStatement.close();
-
-						}
-
-						for (String ID : outputVars) {
-
-							String outputStr = "select * from variablestable where variables_id=" + ID;
-							Statement outputStatement = con.createStatement();
-							ResultSet result = outputStatement.executeQuery(outputStr);
-							Variables var = new Variables();
-							while (result.next()) {
-
-								var.setVariablesID(Integer.parseInt(ID, 10));
-								var.setVariablesName(result.getString("variables_name"));
-								var.setVariablesTypeID(result.getInt("variables_type"));
-							}
-							requirement.addOutputVar(var);
-							outputStatement.close();
-						}
-
-						String testcaseStr = "select * from testcasetable where requirementid=" + requirement.getDbId();
-						Statement testCaseStatement = con.createStatement();
-						ResultSet testCaseResult = testCaseStatement.executeQuery(testcaseStr);
-
-						while (testCaseResult.next()) {
-							TestCase testcase = new TestCase();
-							testcase.setTestcaseID(testCaseResult.getInt("testcase_id"));
-							testcase.setTestcaseInput(testCaseResult.getString("testcase_input"));
-							testcase.setTestcaseOutput(testCaseResult.getString("testcase_output"));
-							testcase.setTestcaseCondition(testCaseResult.getString("testcase_condition"));
-							testcase.setTestcaseType(testCaseResult.getString("testcase_type"));
-							testcase.setTestcaseEvaluate(testCaseResult.getString("testcase_evaluate"));
-
-							requirement.addTestcases(testcase);
-
-						}
-
-						rowRequirement.addChild(requirement);
+            //创建DataBase类
+            while (rs.next()) {
+            	Model model = new Model(rs.getString("model_id"));
+            	model.setDbId(rs.getString("No"));
+            	model.setName(rs.getString("model_name"));
+            	model.setText(rs.getString("model_text"));
+            	model.setModelClass(rs.getString("Model_Class"));
+            	System.out.println(model.getName());
+            	
+            	//提取需求类
+            	String sql2 = "select * from requirementtable where model="+rs.getString("No");
+            	Statement requireStatement = con.createStatement();
+            	ResultSet requirementResult = requireStatement.executeQuery(sql2);
+            	 while (requirementResult.next()) {
+                     Requirement requirement = new Requirement();
+                     requirement.setDbId(requirementResult.getString("No"));
+                     requirement.setParent(model);
+                     requirement.setRequirementId(requirementResult.getString("requirement_id"));
+                     requirement.setRequirementName(requirementResult.getString("requirement_name"));
+                     requirement.setRequirementText(requirementResult.getString("requirement_text"));
+                     String[] preConditionVars = requirementResult.getString("requirement_condition").split(",");
+                     String[] inputVars = requirementResult.getString("requirement_input").split(",");
+                     String[] outputVars = requirementResult.getString("requirement_output").split(",");
+                     for (String ID : preConditionVars) {
+						
+                    	 String preConStr = "select * from variablestable where variables_id="+ID;
+                    	 Statement preConVarsStatement = con.createStatement();
+                    	 ResultSet result = preConVarsStatement.executeQuery(preConStr);
+                    	 Variables var = new Variables();
+                    	 while (result.next()) {
+                    		 
+                    		 var.setVariablesID(Integer.parseInt(ID, 10));
+                    		 var.setVariablesName(result.getString("variables_name"));
+                    		 var.setVariablesTypeID(result.getInt("variables_type"));
+                    	 }
+                    	 
+                    	 
+                    	 requirement.addPreConVar(var);
+                    	 preConVarsStatement.close();
 					}
-					requireStatement.close();
-					model.addChild(rowRequirement);
-
-				}
-				rowRequireStatement.close();
-				database.addChild(model);
-			}
-			rs.close();
-			
-
-			rs.close();
-			
-		} catch (SQLException e) {
-			// 数据库连接失败异常处理
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		} finally {
-			System.out.println("获取数据库数据完毕！");
-		}
-		
-	}
-	
-	/**
-	 * 
-	* @Title: addModel  
-	* @Description: TODO(向库内添加模型)  
-	* @param   参数  
-	* @return void    返回类型  
-	* @throws
-	 */
-	public static void addModel(Model model) {
-		database.addChild(model);
-		insertModel(model);
-	}
-	
-	
-	/**  
-	* @Title: insertModel  
-	* @Description: TODO(插入模型到数据库，插入之前先要判断模型是否已经存在)  
-	* @param  model 待插入的模型
-	* @return void    返回类型  
-	* @throws  
-	*/  
-	public static void insertModel(Model model) {
-		initCon();
-		// TODO Auto-generated method stub
-		String sql="insert into models(model_ID,model_name,model_text,model_class)values('"+model.getID()+"','"+model.getName()+"','"+model.getText()+"','"+model.getModelClass()+"')";
-		try {
-			java.sql.PreparedStatement insertModelStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-			insertModelStatement.executeUpdate();
-			ResultSet key = insertModelStatement.getGeneratedKeys();
-			if(key.next()) {
-				model.setDbId(key.getInt(1)+"");
-			}
-					
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	/**  
-	* @Title: insertModel  
-	* @Description: TODO(插入模型到数据库，插入之前先要判断模型是否已经存在)  
-	* @param  model 待插入的模型
-	* @return void    返回类型  
-	* @throws  
-	*/  
-	public static void insertRowRequirement(RowRequirement rowRequirement,String modelID) {
-		initCon();
-		// TODO Auto-generated method stub
-		String sql="insert into rowrequirement(Name,content,model)values('"+rowRequirement.getName()+"','"+rowRequirement.getContent()+"','"+modelID+"')";
-		try {
-			java.sql.PreparedStatement insertModelStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-			insertModelStatement.executeUpdate();
-			ResultSet key = insertModelStatement.getGeneratedKeys();
-			if(key.next()) {
-				rowRequirement.setDbId(key.getInt(1)+"");
-			}
-					
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
+                     
+                     for (String ID : inputVars) {
+ 						
+                    	 String inputStr = "select * from variablestable where variables_id="+ID;
+                    	 Statement inputStatement = con.createStatement();
+                    	 ResultSet result = inputStatement.executeQuery(inputStr);
+                    	 Variables var = new Variables();
+                    	 while (result.next()) {
+                    		 
+                    		 var.setVariablesID(Integer.parseInt(ID, 10));
+                    		 var.setVariablesName(result.getString("variables_name"));
+                    		 var.setVariablesTypeID(result.getInt("variables_type"));
+                    	 }
+                    	 
+                    	 requirement.addInputVar(var);
+                    	 inputStatement.close();
+                    	 
+					}
+                     
+                     for (String ID : outputVars) {
+ 						
+                    	 String outputStr = "select * from variablestable where variables_id="+ID;
+                    	 Statement outputStatement = con.createStatement();
+                    	 ResultSet result = outputStatement.executeQuery(outputStr);
+                    	 Variables var = new Variables();
+                    	 while (result.next()) {
+                    		 
+                    		 var.setVariablesID(Integer.parseInt(ID, 10));
+                    		 var.setVariablesName(result.getString("variables_name"));
+                    		 var.setVariablesTypeID(result.getInt("variables_type"));
+                    	 }
+                    	 requirement.addOutputVar(var);
+                    	 outputStatement.close();
+					}
+                     
+                    String testcaseStr = "select * from testcasetable where requirementid="+requirement.getDbId();
+                 	Statement testCaseStatement = con.createStatement();
+                 	ResultSet testCaseResult = testCaseStatement.executeQuery(testcaseStr);
+                    
+                 	while(testCaseResult.next()) {
+                 		TestCase testcase = new TestCase();
+                 		testcase.setTestcaseID(testCaseResult.getInt("testcase_id"));
+                 		testcase.setTestcaseInput(testCaseResult.getString("testcase_input"));
+                 		testcase.setTestcaseOutput(testCaseResult.getString("testcase_output"));
+                 		testcase.setTestcaseCondition(testCaseResult.getString("testcase_condition"));
+                 		testcase.setTestcaseType(testCaseResult.getString("testcase_type"));
+                 		testcase.setTestcaseEvaluate(testCaseResult.getString("testcase_evaluate"));
+ 
+                 		requirement.addTestcases(testcase);
+                 		
+                 	}
+                 	
+                     
+                     //TODO: 其他信息
+                     
+                     model.addChild(requirement);
+                 }
+            	requireStatement.close();
+            	
+                database.addChild(model);
+            }
+            System.out.println(typeList);
+            
+            
+            
+            rs.close();
+            con.close();
+        }  
+        catch (ClassNotFoundException e) {
+            // 数据库驱动类异常处理
+            System.out.println("Sorry,can`t find the Driver!");
+            e.printStackTrace();
+        }
+        catch (SQLException e) {
+            // 数据库连接失败异常处理
+            e.printStackTrace();
+        }
+        catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
+        finally {
+            System.out.println("获取数据库数据完毕！");
+        }
+		return database;
+    }
 }
