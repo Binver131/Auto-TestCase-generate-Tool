@@ -10,6 +10,7 @@ import java.util.List;
 
 import com.mysql.jdbc.PreparedStatement;
 
+import console.ConsoleHandler;
 import entity.DataBase;
 import entity.Model;
 import entity.Requirement;
@@ -91,7 +92,7 @@ public class ConnectHelper {
 			// 创建DataBase类
 			while (rs.next()) {
 				Model model = new Model(rs.getString("model_id"));
-				model.setDbId(rs.getString("No"));
+				String key = rs.getString("No");
 				model.setName(rs.getString("model_name"));
 				model.setText(rs.getString("model_text"));
 				model.setModelClass(rs.getString("Model_Class"));
@@ -211,7 +212,7 @@ public class ConnectHelper {
 
 				}
 				rowRequireStatement.close();
-				database.addChild(model);
+				database.addChild(key,model);
 			}
 			rs.close();
 			
@@ -239,8 +240,11 @@ public class ConnectHelper {
 	* @throws
 	 */
 	public static void addModel(Model model) {
-		database.addChild(model);
-		insertModel(model);
+		String key = insertModel(model);
+		if(key != null)
+			database.addChild(key,model);
+		else
+			ConsoleHandler.error("插入数据库失败");
 	}
 	
 	
@@ -251,7 +255,7 @@ public class ConnectHelper {
 	* @return void    返回类型  
 	* @throws  
 	*/  
-	public static void insertModel(Model model) {
+	public static String insertModel(Model model) {
 		initCon();
 		// TODO Auto-generated method stub
 		String sql="insert into models(model_ID,model_name,model_text,model_class)values('"+model.getID()+"','"+model.getName()+"','"+model.getText()+"','"+model.getModelClass()+"')";
@@ -260,7 +264,7 @@ public class ConnectHelper {
 			insertModelStatement.executeUpdate();
 			ResultSet key = insertModelStatement.getGeneratedKeys();
 			if(key.next()) {
-				model.setDbId(key.getInt(1)+"");
+				return key.getString(1);
 			}
 					
 			
@@ -268,6 +272,7 @@ public class ConnectHelper {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return null;
 	}
 	
 	/**  
@@ -295,5 +300,19 @@ public class ConnectHelper {
 			e.printStackTrace();
 		}
 	}
+	/**  
+	* @Title: existModel  
+	* @Description: TODO(这里用一句话描述这个方法的作用)  
+	* @param   参数  
+	* @return boolean    返回类型  
+	* @throws  
+	*/  
+	public static boolean existModel(Model model) {
+		// TODO Auto-generated method stub
+		
+		
+		return false;
+	}
+
 	
 }

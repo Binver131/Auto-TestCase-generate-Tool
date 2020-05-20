@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public class Model {
 	private DataBase parent;
-	private String dbId;				//数据库中的主键
+	//private String dbId;				//数据库中的主键
 	private String ID;
 	private String name;
 	private String modelClass;			//需求模型等级
@@ -112,17 +112,6 @@ public class Model {
 	public void setID(String iD) {
 		ID = iD;
 	}
-	/**
-	 * @return the dbId
-	 */
-	public String getDbId() {
-		return dbId;
-	}
-	/**
-	 * @param dbId the dbId to set
-	 */
-	public void setDbId(String dbId) {
-		this.dbId = dbId;
-	}
+	
 }
 

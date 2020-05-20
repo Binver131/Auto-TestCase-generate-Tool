@@ -54,6 +54,11 @@ public class importHandler extends AbstractHandler{
 			model.setText(text);
 			model.setModelClass(modelClass);
 			
+			
+			if(!ConnectHelper.existModel(model)) {
+				ConsoleHandler.error("模型已存在");
+				return null;
+			}
 			ConnectHelper.addModel(model);
 			
 			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();

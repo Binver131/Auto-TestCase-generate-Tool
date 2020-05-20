@@ -1,0 +1,32 @@
+package entity;
+import java.util.HashMap;
+
+public class DataBase {
+	private HashMap<String,Model> models;
+	public DataBase() {
+		models = new HashMap<String,Model>();
+	}
+	public void addChild(Model child) {
+		models.put(child.getDbId(),child);
+		child.setParent(this);
+	}
+	public void removeChild(Model child) {
+		models.remove(child.getDbId());
+		child.setParent(null);
+	}
+	public Model[] getChildren() {
+		
+		return (Model[]) models.values().toArray(new Model[models.size()]);
+	}
+	
+	public boolean hasModel(Model model) {
+		return models.containsValue(model);
+		
+		return false;
+	}
+	
+	public boolean hasChildren() {
+		return models.size()>0;
+	}
+}
+

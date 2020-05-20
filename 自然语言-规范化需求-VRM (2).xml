@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<VRMmodel Name="EICAS" Version="V1.0" class="C">
+  <modelDiscription>发动机显示和机组警告系统需求模型</modelDiscription>
+  
+  <requirements>
+    <requirement ID="NLreq1">
+      <content>当ipDMILayoutNormal = TRUE时，飞机综合电子显示系统应在标准布局中显示发动机符号。</content>
+    </requirement>
+    <requirement ID="NLreq2">
+      <content>在以下情况下，飞机综合电子显示系统应以压缩布局显示发动机符号：ipDMILayoutNormal = FALSE OR ipDMILayoutNormal无效.</content>
+    </requirement>
+    <requirement ID="NLreq3">
+      <content>当（参数ipFlightDeckUnitsConfigurationIsMetric有效并且等于TRUE）时，飞机综合电子显示系统应将参数ipFlightDeckUnitsConfigurationIsMetric设置为METRIC，否则设置为IMPERIAL。</content>
+    </requirement>
+
+  </requirements>
+
+  <standardRequirements>
+    <standardRequirement ID="SLreq1" relateReq="NLreq1" type="genralConditon">
+      <subject>opEngineHFEngineLayout</subject>
+      <predicate>提供</predicate>
+      <object>Normal</object>
+      <condition>ipDMIEngineLayoutNormal=true</condition>
+      <content>当满足以下条件，opEngineHFEngineLayout应能够提供Normal：ipDMIEngineLayoutNormal=true。</content>
+    </standardRequirement>
+    <standardRequirement ID="SLreq2" relateReq="NLreq2" type="genralConditon">
+      <subject>opEngineHFEngineLayout</subject>
+      <predicate>提供</predicate>
+      <object>Compressed</object>
+      <condition>ipDMIEngineLayoutNormal=FALSE OR ipDMIEngineLayoutNormalStatus = Invalid</condition>
+      <content>当满足以下条件，opEngineHFEngineLayout应能够提供Compressed：ipDMIEngineLayoutNormal=FALSE OR ipDMIEngineLayoutNormalStatus = Invalid.</content>
+    </standardRequirement>
+    <standardRequirement ID="SLreq3" relateReq="NLreq3" type="genralConditon">
+      <subject>opFDUConfigurationFormat</subject>
+      <predicate>设置为</predicate>
+      <object>METRIC</object>
+      <condition>ipFDUConfigurationIsMetric = TRUE AND ipFDUConfigurationIsMetricStatus = Valid</condition>
+      <content>当满足以下条件，opFDUConfigurationFormat应能够设置为METRIC：ipFDUConfigurationIsMetric = TRUE AND ipFDUConfigurationIsMetricStatus = Valid。</content>
+    </standardRequirement>
+    <standardRequirement ID="SLreq4" relateReq="NLreq3" type="genralConditon">
+      <subject>opFDUConfigurationFormat</subject>
+      <predicate>设置为</predicate>
+      <object>IMPERIAL</object>
+      <condition>ipFDUConfigurationIsMetric = FALSE AND ipFDUConfigurationIsMetricStatus = Valid.</condition>
+      <content>当满足以下条件，opFDUConfigurationFormat应能够设置为IMPERIAL：ipFDUConfigurationIsMetric = FALSE AND ipFDUConfigurationIsMetricStatus = Valid。</content>
+    </standardRequirement>
+    <standardRequirement ID="SLreq5" relateReq="NLreq3" type="genralConditon">
+      <subject>opFDUConfigurationFormat</subject>
+      <predicate>设置为</predicate>
+      <object>IMPERIAL</object>
+      <condition>ipFDUConfigurationIsMetric = FALSE AND ipFDUConfigurationIsMetricStatus = Invalid</condition>
+      <content>当满足以下条件，opFDUConfigurationFormat应能够设置为IMPERIAL：ipFDUConfigurationIsMetric = FALSE AND ipFDUConfigurationIsMetricStatus = Invalid。</content>
+    </standardRequirement>
+    <standardRequirement ID="SLreq6" relateReq="NLreq3" type="genralConditon">
+      <subject>opFDUConfigurationFormat</subject>
+      <predicate>设置为</predicate>
+      <object>IMPERIAL</object>
+      <condition>ipFDUConfigurationIsMetric = TRUE AND ipFDUConfigurationIsMetricStatus = Invalid</condition>
+      <content>当满足以下条件，opFDUConfigurationFormat应能够设置为IMPERIAL：ipFDUConfigurationIsMetric = TRUE AND ipFDUConfigurationIsMetricStatus = Invalid。</content>
+    </standardRequirement>
+  </standardRequirements>
+
+  <constants/>
+
+  <types>
+    <type name="engineLayout">
+      <baseType>Enumerated</baseType>
+      <range>Compressed=0,Normal=1</range>
+      <accuracy/>
+    </type>
+    <type name="FDUParameterFormat">
+      <baseType>Enumerated</baseType>
+      <range>IMPERIAL=0,METRIC=1</range>
+      <accuracy/>
+    </type>
+    <type name="valueStauts">
+      <baseType>Enumerated</baseType>
+      <range>Invalid=0,Valid=1</range>
+      <accuracy/>
+    </type>
+  </types>
+
+  <inputs>
+    <input name="ipDMIEngineLayoutNormal">
+      <inputType>Boolean</inputType>
+      <initialValue>FALSE</initialValue>
+      <range>FALSE=0,TRUE=1</range>
+      <accuracy/>
+    </input>
+    <input name="ipDMIEngineLayoutNormalStatus">
+      <inputType>valueStauts</inputType>
+      <initialValue>Invalid</initialValue>
+      <range>Invalid=0,Valid=1</range>
+      <accuracy/>
+    </input>
+    <input name="ipFDUConfigurationIsMetric">
+      <inputType>Boolean</inputType>
+      <initialValue>FALSE</initialValue>
+      <range>FALSE=0,TRUE=1</range>
+      <accuracy/>
+    </input>
+    <input name="ipFDUConfigurationIsMetricStatus">
+      <inputType>valueStauts</inputType>
+      <initialValue>Invalid</initialValue>
+      <range>Invalid=0,Valid=1</range>
+      <accuracy/>
+    </input>
+  </inputs>
+
+  <tables>
+    <table name="opEngineHFEngineLayout" isOutput="1">
+      <conditionTable>
+        <row>
+          <assignment>Normal</assignment>
+          <condition>ipDMIEngineLayoutNormal=true</condition>
+          <relateSReq>SLreq1</relateSReq>
+        </row>
+        <row>
+          <assignment>Compressed</assignment>
+          <condition>ipDMIEngineLayoutNormal=FALSE OR ipDMIEngineLayoutNormalStatus = Invalid</condition>
+          <relateSReq>SLreq2</relateSReq>
+        </row>
+      </conditionTable>
+      <tableVariableType>engineLayout</tableVariableType>
+      <initialValue>Normal</initialValue>
+      <range>Compressed=0,Normal=1</range>
+      <accuracy/>
+    </table>
+    <table name="opFDUConfigurationFormat" isOutput="1">
+      <conditionTable>
+        <row>
+          <assignment>METRIC</assignment>
+          <condition>ipFDUConfigurationIsMetric = TRUE AND ipFDUConfigurationIsMetricStatus = Valid</condition>
+          <relateSReq>SLreq3</relateSReq>
+        </row>
+        <row>
+          <assignment>IMPERIAL</assignment>
+          <condition>ipFDUConfigurationIsMetric = FALSE AND ipFDUConfigurationIsMetricStatus = Valid</condition>
+          <relateSReq>SLreq4</relateSReq>
+        </row>
+        <row>
+          <assignment>IMPERIAL</assignment>
+          <condition>ipFDUConfigurationIsMetric = FALSE AND ipFDUConfigurationIsMetricStatus = Invalid</condition>
+          <relateSReq>SLreq5</relateSReq>
+        </row>
+        <row>
+          <assignment>IMPERIAL</assignment>
+          <condition>ipFDUConfigurationIsMetric = TRUE AND ipFDUConfigurationIsMetricStatus = Invalid</condition>
+          <relateSReq>SLreq6</relateSReq>
+        </row>
+      </conditionTable>
+      <tableVariableType>FDUParameterFormat</tableVariableType>
+      <initialValue>METRIC</initialValue>
+      <range>IMPERIAL=0,METRIC=1</range>
+      <accuracy/>
+    </table>
+  </tables>
+
+  <stateMachines>
+    <stateMachine name="">
+
+    </stateMachine>
+  </stateMachines>
+
+</VRMmodel>
