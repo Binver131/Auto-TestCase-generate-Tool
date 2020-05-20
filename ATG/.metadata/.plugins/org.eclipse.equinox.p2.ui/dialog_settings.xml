@@ -3,8 +3,8 @@
 	<section name="org.eclipse.equinox.internal.p2.ui.dialogs.InstallWizard.WizardSettings">
 		<item key="DIALOG_X_ORIGIN" value="712"/>
 		<item key="DIALOG_Y_ORIGIN" value="65"/>
-		<item key="DIALOG_WIDTH" value="995"/>
-		<item key="DIALOG_HEIGHT" value="876"/>
+		<item key="DIALOG_WIDTH" value="1810"/>
+		<item key="DIALOG_HEIGHT" value="1245"/>
 		<item key="DIALOG_FONT_NAME" value="1|Microsoft YaHei UI|9.0|0|WINDOWS|1|-15|0|0|0|400|0|0|0|1|0|0|0|0|Microsoft YaHei UI"/>
 	</section>
 	<section name="AvailableIUsPage">

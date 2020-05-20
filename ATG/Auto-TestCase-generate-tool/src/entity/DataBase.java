@@ -1,28 +1,28 @@
 package entity;
-/**
- * 整个的数据库内容。
- * @author 汪文轩
- *
- */
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 public class DataBase {
-	private List<Model> models;
+	private HashMap<String,Model> models;
 	public DataBase() {
-		models = new ArrayList<>();
+		models = new HashMap<String,Model>();
 	}
-	public void addChild(Model child) {
-		models.add(child);
+	public void addChild(String key,Model child) {
+		models.put(key,child);
 		child.setParent(this);
 	}
-	public void removeChild(Model child) {
-		models.remove(child);
-		child.setParent(null);
+	public void removeChild(String key) {
+		models.get(key).setParent(null);
+		models.remove(key);
 	}
 	public Model[] getChildren() {
-		return (Model[]) models.toArray(new Model[models.size()]);
+		
+		return (Model[]) models.values().toArray(new Model[models.size()]);
 	}
+	
+	public boolean hasModel(Model model) {
+		return models.containsValue(model);
+	}
+	
 	public boolean hasChildren() {
 		return models.size()>0;
 	}

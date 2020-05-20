@@ -15,7 +15,7 @@ public class Requirement {
 	private String requirementId;		//需求标识符
 	private String requirementName;		//需求名称
 	private String requirementText;		//需求描述文本
-	private Model model;				//需求所属的需求模型
+	private RowRequirement parent;				//需求所属的需求模型
 	private List<Variables> preConditionVars;	//前置条件变量列表
 	private List<Variables> inputVars;			//输入变量列表
 	private List<Variables> outputVars;			//输出变量列表
@@ -108,9 +108,9 @@ public class Requirement {
 	 * 树型结构中使用的回调函数，设置父节点（需求模型）
 	 * @param model 所属的需求模型
 	 */
-	public void setParent(Model model) {
+	public void setParent(RowRequirement parent) {
 		// TODO Auto-generated method stub
-		this.model = model;
+		this.parent = parent;
 	}
 	
 	/**  
@@ -120,9 +120,9 @@ public class Requirement {
 	* @return Object    返回类型  
 	* @throws  
 	*/  
-	public Model getParent() {
+	public RowRequirement getParent() {
 		// TODO Auto-generated method stub
-		return model;
+		return parent;
 	}
 	/**
 	 * @return the dbId

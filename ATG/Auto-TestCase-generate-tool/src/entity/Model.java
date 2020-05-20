@@ -10,7 +10,9 @@ package entity;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**  
@@ -21,15 +23,27 @@ import java.util.List;
  */
 public class Model {
 	private DataBase parent;
-	private String dbId;				//数据库中的主键
+	//private String dbId;				//数据库中的主键
 	private String ID;
 	private String name;
 	private String modelClass;			//需求模型等级
 	private String text;
-	private List<Requirement> children;//需求表
+	private List<RowRequirement> children;//需求表
+	private Map<String,Type> typeMap;
+	
+	public void addType(Type type) {
+		typeMap.put(type.getTypeID(),type);
+	}
+	
+	public Type getType(String id) {
+		return typeMap.get(id);
+	}
+	
+	
 	public Model(String ID) {
 		this.ID = ID;
 		children = new ArrayList<>();
+		typeMap = new HashMap<String, Type>();
 	}
 	public String getName() {
 		return name;
@@ -39,22 +53,22 @@ public class Model {
 		this.name = name;
 	}
 	
-	public void addChild(Requirement child) {
+	public void addChild(RowRequirement child) {
 		children.add(child);
 		child.setParent(this);
 	}
-	public void removeChild(Requirement child) {
+	public void removeChild(RowRequirement child) {
 		children.remove(child);
 		child.setParent(null);
 	}
-	public Requirement[] getChildren() {
-		return (Requirement[]) children.toArray(new Requirement[children.size()]);
+	public RowRequirement[] getChildren() {
+		return (RowRequirement[]) children.toArray(new RowRequirement[children.size()]);
 	}
 	public boolean hasChildren() {
 		return children.size()>0;
 	}
-	public void setParent(DataBase workSpace) {
-		this.parent = workSpace;
+	public void setParent(DataBase database) {
+		this.parent = database;
 	}
 	public DataBase getParent() {
 		return parent;
@@ -98,17 +112,6 @@ public class Model {
 	public void setID(String iD) {
 		ID = iD;
 	}
-	/**
-	 * @return the dbId
-	 */
-	public String getDbId() {
-		return dbId;
-	}
-	/**
-	 * @param dbId the dbId to set
-	 */
-	public void setDbId(String dbId) {
-		this.dbId = dbId;
-	}
+	
 }
 
