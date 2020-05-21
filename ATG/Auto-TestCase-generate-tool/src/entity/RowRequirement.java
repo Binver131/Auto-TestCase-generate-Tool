@@ -85,5 +85,6 @@ public class RowRequirement {
 	public void setContent(String content) {
 		this.content = content;
 	}
+	
 }
 
