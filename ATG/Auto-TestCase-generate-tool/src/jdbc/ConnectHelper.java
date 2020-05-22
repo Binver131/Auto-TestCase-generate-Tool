@@ -141,57 +141,60 @@ public class ConnectHelper {
 						String[] inputVars = requirementResult.getString("requirement_input").split(",");
 						String[] outputVars = requirementResult.getString("requirement_output").split(",");
 						for (String ID : preConditionVars) {
-
-							String preConStr = "select * from variablestable where variables_id=" + ID;
-							Statement preConVarsStatement = con.createStatement();
-							ResultSet result = preConVarsStatement.executeQuery(preConStr);
-							Variables var = new Variables();
-							while (result.next()) {
-
-								var.setVariablesID(Integer.parseInt(ID, 10));
-								var.setVariablesName(result.getString("variables_name"));
-								var.setVariablesTypeID(result.getInt("variables_type"));
+							if (!ID.equals("")&& ID != null) {
+								
+								String preConStr = "select * from variablestable where variables_id=" + ID;
+								Statement preConVarsStatement = con.createStatement();
+								ResultSet result = preConVarsStatement.executeQuery(preConStr);
+								Variables var = new Variables();
+								while (result.next()) {
+									
+									var.setVariablesID(Integer.parseInt(ID, 10));
+									var.setVariablesName(result.getString("variables_name"));
+									var.setVariablesTypeID(result.getInt("variables_type"));
+								}
+								
+								requirement.addPreConVar(var);
+								variableslist.add(var);
+								preConVarsStatement.close();
 							}
-
-							requirement.addPreConVar(var);
-							variableslist.add(var);
-							preConVarsStatement.close();
 						}
 
 						for (String ID : inputVars) {
-
-							String inputStr = "select * from variablestable where variables_id=" + ID;
-							Statement inputStatement = con.createStatement();
-							ResultSet result = inputStatement.executeQuery(inputStr);
-							Variables var = new Variables();
-							while (result.next()) {
-
-								var.setVariablesID(Integer.parseInt(ID, 10));
-								var.setVariablesName(result.getString("variables_name"));
-								var.setVariablesTypeID(result.getInt("variables_type"));
+							if (!ID.equals("")&& ID != null) {
+								String inputStr = "select * from variablestable where variables_id=" + ID;
+								Statement inputStatement = con.createStatement();
+								ResultSet result = inputStatement.executeQuery(inputStr);
+								Variables var = new Variables();
+								while (result.next()) {
+	
+									var.setVariablesID(Integer.parseInt(ID, 10));
+									var.setVariablesName(result.getString("variables_name"));
+									var.setVariablesTypeID(result.getInt("variables_type"));
+								}
+	
+								requirement.addInputVar(var);
+								variableslist.add(var);
+								inputStatement.close();
 							}
-
-							requirement.addInputVar(var);
-							variableslist.add(var);
-							inputStatement.close();
-
 						}
 
 						for (String ID : outputVars) {
-
-							String outputStr = "select * from variablestable where variables_id=" + ID;
-							Statement outputStatement = con.createStatement();
-							ResultSet result = outputStatement.executeQuery(outputStr);
-							Variables var = new Variables();
-							while (result.next()) {
-
-								var.setVariablesID(Integer.parseInt(ID, 10));
-								var.setVariablesName(result.getString("variables_name"));
-								var.setVariablesTypeID(result.getInt("variables_type"));
+							if (!ID.equals("")&& ID != null) {
+								String outputStr = "select * from variablestable where variables_id=" + ID;
+								Statement outputStatement = con.createStatement();
+								ResultSet result = outputStatement.executeQuery(outputStr);
+								Variables var = new Variables();
+								while (result.next()) {
+	
+									var.setVariablesID(Integer.parseInt(ID, 10));
+									var.setVariablesName(result.getString("variables_name"));
+									var.setVariablesTypeID(result.getInt("variables_type"));
+								}
+								requirement.addOutputVar(var);
+								variableslist.add(var);
+								outputStatement.close();
 							}
-							requirement.addOutputVar(var);
-							variableslist.add(var);
-							outputStatement.close();
 						}
 
 						String testcaseStr = "select * from testcasetable where requirementid=" + requirement.getDbId();
