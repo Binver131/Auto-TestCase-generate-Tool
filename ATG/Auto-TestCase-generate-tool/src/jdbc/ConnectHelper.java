@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.mysql.jdbc.PreparedStatement;
 
@@ -28,6 +29,8 @@ import entity.Variables;
 public class ConnectHelper {
 	//模型库
 	private static DataBase database = null;
+	
+	private static List<Variables> variableslist;
 	//数据库连接
 	private static Connection con;
 	// 驱动程序名
@@ -78,7 +81,7 @@ public class ConnectHelper {
 	
 	public static void initDataBase() {
 		database = new DataBase();
-		
+		variableslist = new ArrayList<Variables>();
 		// 遍历查询结果集
 		try {
 			// 加载驱动程序
@@ -138,54 +141,60 @@ public class ConnectHelper {
 						String[] inputVars = requirementResult.getString("requirement_input").split(",");
 						String[] outputVars = requirementResult.getString("requirement_output").split(",");
 						for (String ID : preConditionVars) {
-
-							String preConStr = "select * from variablestable where variables_id=" + ID;
-							Statement preConVarsStatement = con.createStatement();
-							ResultSet result = preConVarsStatement.executeQuery(preConStr);
-							Variables var = new Variables();
-							while (result.next()) {
-
-								var.setVariablesID(Integer.parseInt(ID, 10));
-								var.setVariablesName(result.getString("variables_name"));
-								var.setVariablesTypeID(result.getInt("variables_type"));
+							if (!ID.equals("")&& ID != null) {
+								
+								String preConStr = "select * from variablestable where variables_id=" + ID;
+								Statement preConVarsStatement = con.createStatement();
+								ResultSet result = preConVarsStatement.executeQuery(preConStr);
+								Variables var = new Variables();
+								while (result.next()) {
+									
+									var.setVariablesID(Integer.parseInt(ID, 10));
+									var.setVariablesName(result.getString("variables_name"));
+									var.setVariablesTypeID(result.getInt("variables_type"));
+								}
+								
+								requirement.addPreConVar(var);
+								variableslist.add(var);
+								preConVarsStatement.close();
 							}
-
-							requirement.addPreConVar(var);
-							preConVarsStatement.close();
 						}
 
 						for (String ID : inputVars) {
-
-							String inputStr = "select * from variablestable where variables_id=" + ID;
-							Statement inputStatement = con.createStatement();
-							ResultSet result = inputStatement.executeQuery(inputStr);
-							Variables var = new Variables();
-							while (result.next()) {
-
-								var.setVariablesID(Integer.parseInt(ID, 10));
-								var.setVariablesName(result.getString("variables_name"));
-								var.setVariablesTypeID(result.getInt("variables_type"));
+							if (!ID.equals("")&& ID != null) {
+								String inputStr = "select * from variablestable where variables_id=" + ID;
+								Statement inputStatement = con.createStatement();
+								ResultSet result = inputStatement.executeQuery(inputStr);
+								Variables var = new Variables();
+								while (result.next()) {
+	
+									var.setVariablesID(Integer.parseInt(ID, 10));
+									var.setVariablesName(result.getString("variables_name"));
+									var.setVariablesTypeID(result.getInt("variables_type"));
+								}
+	
+								requirement.addInputVar(var);
+								variableslist.add(var);
+								inputStatement.close();
 							}
-
-							requirement.addInputVar(var);
-							inputStatement.close();
-
 						}
 
 						for (String ID : outputVars) {
-
-							String outputStr = "select * from variablestable where variables_id=" + ID;
-							Statement outputStatement = con.createStatement();
-							ResultSet result = outputStatement.executeQuery(outputStr);
-							Variables var = new Variables();
-							while (result.next()) {
-
-								var.setVariablesID(Integer.parseInt(ID, 10));
-								var.setVariablesName(result.getString("variables_name"));
-								var.setVariablesTypeID(result.getInt("variables_type"));
+							if (!ID.equals("")&& ID != null) {
+								String outputStr = "select * from variablestable where variables_id=" + ID;
+								Statement outputStatement = con.createStatement();
+								ResultSet result = outputStatement.executeQuery(outputStr);
+								Variables var = new Variables();
+								while (result.next()) {
+	
+									var.setVariablesID(Integer.parseInt(ID, 10));
+									var.setVariablesName(result.getString("variables_name"));
+									var.setVariablesTypeID(result.getInt("variables_type"));
+								}
+								requirement.addOutputVar(var);
+								variableslist.add(var);
+								outputStatement.close();
 							}
-							requirement.addOutputVar(var);
-							outputStatement.close();
 						}
 
 						String testcaseStr = "select * from testcasetable where requirementid=" + requirement.getDbId();
@@ -239,12 +248,13 @@ public class ConnectHelper {
 	* @return void    返回类型  
 	* @throws
 	 */
-	public static void addModel(Model model) {
+	public static String addModel(Model model) {
 		String key = insertModel(model);
 		if(key != null)
 			database.addChild(key,model);
 		else
 			ConsoleHandler.error("插入数据库失败");
+		return key;
 	}
 	
 	
@@ -282,23 +292,22 @@ public class ConnectHelper {
 	* @return void    返回类型  
 	* @throws  
 	*/  
-	public static void insertRowRequirement(RowRequirement rowRequirement,String modelID) {
+	public static String insertRowRequirement(RowRequirement rowRequirement,String modelID) {
 		initCon();
 		// TODO Auto-generated method stub
-		String sql="insert into rowrequirement(Name,content,model)values('"+rowRequirement.getName()+"','"+rowRequirement.getContent()+"','"+modelID+"')";
+		String sql="insert into rowrequirement(Name,content,model)values('"+rowRequirement.getName()+"','"+rowRequirement.getContent()+"',"+modelID+")";
 		try {
-			java.sql.PreparedStatement insertModelStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-			insertModelStatement.executeUpdate();
-			ResultSet key = insertModelStatement.getGeneratedKeys();
+			java.sql.PreparedStatement insertRowRequirementStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			insertRowRequirementStatement.executeUpdate();
+			ResultSet key = insertRowRequirementStatement.getGeneratedKeys();
 			if(key.next()) {
-				rowRequirement.setDbId(key.getInt(1)+"");
-			}
-					
-			
+				return key.getString(1);
+			}	
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return null;
 	}
 	/**  
 	* @Title: existModel  
@@ -310,9 +319,121 @@ public class ConnectHelper {
 	public static boolean existModel(Model model) {
 		// TODO Auto-generated method stub
 		
-		
+		for(Map.Entry<String, Model> entry : database.getModels().entrySet()) {
+			if(entry.getValue().getName().equals(model.getName())) {
+				return false;
+			}
+		}
 		return true;
 	}
-
+	
+	
+	/**  
+	* @Title: insertVariables  
+	* @Description: TODO(用于导入模型时插入变量)  
+	* @param  Variables variables,String modelID  
+	* @return void    
+	* @throws  
+	*/  
+	
+	public static String insertVariables(Variables variables,String modelID) {
+		initCon();
+		for(Variables var:variableslist) {
+			if(var.getVariablesName().equals(variables.getVariablesName())) {
+				return var.getVariablesID()+"";
+			}
+		}
+		String sql="INSERT INTO variablestable(variables_name,variables_type,model) VALUES ('"+variables.getVariablesName()+"',"+variables.getVariablesTypeID()+","+modelID+")";
+		try {
+			java.sql.PreparedStatement insertVariablesStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			insertVariablesStatement.executeUpdate();	
+			
+			ResultSet key = insertVariablesStatement.getGeneratedKeys();
+			if(key.next()) {
+				variables.setVariablesID(Integer.parseInt(key.getString(1)));
+				variableslist.add(variables);
+				return key.getString(1);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
+	/**  
+	* @Title: insertRequirement  
+	* @Description: TODO(用于导入模型中的插入需求)  
+	* @param  Requirement requirement,String modelID  
+	* @return void    
+	* @throws  
+	*/  
+	
+	public static void insertRequirement(Requirement requirement,String modelID,String rowID) {
+		initCon();
+		String preConVars = "";
+		String inputVars = "";
+		String outputVars = "";
+		for(Variables variables:requirement.getInputVars()) {
+			inputVars = inputVars +variables.getVariablesID()+",";
+		}
+		for(Variables variables:requirement.getOutputVars()) {
+			outputVars = outputVars +variables.getVariablesID()+",";
+		}
+		for(Variables variables:requirement.getPreConVars()) {
+			preConVars = preConVars +variables.getVariablesID()+",";
+		}
+		String sql = "INSERT INTO requirementtable(requirement_id,requirement_name,requirement_text,requirement_condition,requirement_input,requirement_output,model,RowRequirement)VALUES('"+requirement.getRequirementId()+"','"+requirement.getRequirementName()+"','"+requirement.getRequirementText()+"','"+preConVars+"','"+inputVars+"','"+outputVars+"',"+modelID+","+rowID+")";
+		try {
+			java.sql.PreparedStatement insertRequirementStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			insertRequirementStatement.executeUpdate();
+//			ResultSet key = insertRequirementStatement.getGeneratedKeys();
+//			if(key.next()) {	
+//				requirement.setDbId(key.getInt(1)+"");
+//			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	/**  
+	* @Title: insertType  
+	* @Description: TODO(用于插入类型)  
+	* @param   
+	* @return void    
+	* @throws  
+	*/
+	public static String insertType(Type type,String modelID) {
+		initCon();
+		String sql = "INSERT INTO typetable(type_name,type_range,model,size) VALUES ('"+type.getTypename()+"','"+type.getTyperange()+"',"+modelID+","+type.getSizeString()+")";
+		try {
+			java.sql.PreparedStatement insertRequirementStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			insertRequirementStatement.executeUpdate();
+			ResultSet key = insertRequirementStatement.getGeneratedKeys();
+			if(key.next()) {	
+				return key.getString(1);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	
+	
+	/**  
+	* @Title: insertRequirement  
+	* @Description: TODO(用于导入模型中的插入测试用例)  
+	* @param   
+	* @return void    
+	* @throws  
+	*/
+	public static void insertTestCase(TestCase testCase,String modelID) {
+		
+	}
 	
 }

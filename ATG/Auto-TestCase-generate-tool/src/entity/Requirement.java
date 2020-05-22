@@ -51,10 +51,10 @@ public class Requirement {
 		return (Variables[]) outputVars.toArray(new Variables[outputVars.size()]);
 	}
 	public Variables[] getInputVars() {
-		return (Variables[]) inputVars.toArray(new Variables[outputVars.size()]);
+		return (Variables[]) inputVars.toArray(new Variables[inputVars.size()]);
 	}
 	public Variables[] getPreConVars() {
-		return (Variables[]) preConditionVars.toArray(new Variables[outputVars.size()]);
+		return (Variables[]) preConditionVars.toArray(new Variables[preConditionVars.size()]);
 	}
 	
 	

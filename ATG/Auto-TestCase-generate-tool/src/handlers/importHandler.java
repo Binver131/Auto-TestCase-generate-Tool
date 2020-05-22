@@ -2,6 +2,8 @@ package handlers;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -21,6 +23,10 @@ import org.xml.sax.SAXException;
 
 import console.ConsoleHandler;
 import entity.Model;
+import entity.Requirement;
+import entity.RowRequirement;
+import entity.Type;
+import entity.Variables;
 import jdbc.ConnectHelper;
 import views.NavigationView;
 
@@ -45,21 +51,104 @@ public class importHandler extends AbstractHandler{
 			Document document = db.parse("file:///"+path.getPath());
 			
 			NodeList modelNode = document.getElementsByTagName("VRMmodel");
-			String name = modelNode.item(0).getAttributes().getNamedItem("Name").getTextContent();
-			String ID = modelNode.item(0).getAttributes().getNamedItem("Version").getTextContent();
-			String text = document.getElementsByTagName("modelDiscription").item(0).getFirstChild().getNodeValue();
+			String modelname = modelNode.item(0).getAttributes().getNamedItem("Name").getTextContent();
+			String modelID = modelNode.item(0).getAttributes().getNamedItem("Version").getTextContent();
+			String modeltext = document.getElementsByTagName("modelDiscription").item(0).getFirstChild().getNodeValue();
 			String modelClass = modelNode.item(0).getAttributes().getNamedItem("class").getTextContent();
-			Model model = new Model(ID);
-			model.setName(name);
-			model.setText(text);
+			Model model = new Model(modelID);
+			model.setName(modelname);
+			model.setText(modeltext);
 			model.setModelClass(modelClass);
-			
 			
 			if(!ConnectHelper.existModel(model)) {
 				ConsoleHandler.error("模型已存在");
 				return null;
 			}
-			ConnectHelper.addModel(model);
+			String key = ConnectHelper.addModel(model);
+			
+			
+			//解析类型
+			NodeList typenode = document.getElementsByTagName("type");
+			for(int i=0;i<typenode.getLength();i++) {
+				Type type= new Type();
+				String typename = typenode.item(i).getAttributes().getNamedItem("name").getTextContent();
+				String basetype = document.getElementsByTagName("baseType").item(i).getFirstChild().getNodeValue();
+				String typerange = document.getElementsByTagName("range").item(i).getFirstChild().getNodeValue();
+				if(basetype.equals("Enumerated")) {
+					typerange= "["+typerange+"]";
+				}else {
+					//一共有八个基础类型，需要按类型对自定义类型的范围字符串处理
+				}
+				type.setTypename(basetype);
+				type.setTyperange(typerange);
+				//长度最好也根据不同的基础类型改变
+				type.setSizeString("4");
+				//这里返回的类型id还没有和变量关联
+				ConnectHelper.insertType(type, key);
+			}
+			
+			
+			//解析原始需求
+			Map<String, String> rowmap = new HashMap<String, String>();
+			NodeList rowrequirementnode = document.getElementsByTagName("requirement");
+			for(int i=0;i<rowrequirementnode.getLength();i++) {
+				String rowrequirementname = rowrequirementnode.item(i).getAttributes().getNamedItem("name").getTextContent();
+				String moderowrequirementtext = document.getElementsByTagName("content").item(i).getFirstChild().getNodeValue();
+				RowRequirement rowRequirement = new RowRequirement();
+				rowRequirement.setName(rowrequirementname);
+				rowRequirement.setContent(moderowrequirementtext);
+				rowRequirement.setParent(model);
+				rowmap.put(ConnectHelper.insertRowRequirement(rowRequirement,key), rowrequirementnode.item(i).getAttributes().getNamedItem("ID").getTextContent());
+			}
+			
+			//解析需求
+			NodeList requirementnode = document.getElementsByTagName("standardRequirement");
+			for(int i=0;i<requirementnode.getLength();i++) {
+				Requirement requirement = new Requirement();
+				String requirementid = requirementnode.item(i).getAttributes().getNamedItem("ID").getTextContent();
+				String requirementname = requirementnode.item(i).getAttributes().getNamedItem("name").getTextContent();
+				String requirementtextString = "";
+				
+				NodeList variableinputnode = document.getElementsByTagName("inputs");
+				NodeList variableoutputnode = document.getElementsByTagName("outputs");
+				
+				for(int j=0,k=variableinputnode.item(i).getChildNodes().getLength();j<k;j++) {
+					if(variableinputnode.item(i).getChildNodes().item(j).getNodeName().equals("input")) {
+						Variables variables = new Variables();
+						String variableinputname =  variableinputnode.item(i).getChildNodes().item(j).getFirstChild().getNodeValue();
+						int variableinputtype = 1;
+						variables.setVariablesName(variableinputname);
+						variables.setVariablesTypeID(variableinputtype);
+						variables.setVariablesID(Integer.parseInt(ConnectHelper.insertVariables(variables, key)));
+						requirement.addInputVar(variables);
+					}
+				}
+				
+				for(int j=0,k=variableoutputnode.item(i).getChildNodes().getLength();j<k;j++) {
+					if(variableoutputnode.item(i).getChildNodes().item(j).getNodeName().equals("output")) {
+						Variables variables = new Variables();
+						String variableoutputname =  variableoutputnode.item(i).getChildNodes().item(j).getFirstChild().getNodeValue();
+						int variableoutputtype = 1;
+						variables.setVariablesName(variableoutputname);
+						variables.setVariablesTypeID(variableoutputtype);
+						variables.setVariablesID(Integer.parseInt(ConnectHelper.insertVariables(variables, key)));
+						requirement.addOutputVar(variables);
+					}
+				}
+				
+				String requirementrow = requirementnode.item(i).getAttributes().getNamedItem("relateReq").getTextContent();
+				String rowID = null;
+				for (Map.Entry<String, String> entry : rowmap.entrySet()) {	
+				   if(entry.getValue().equals(requirementrow)) {
+					    rowID = entry.getKey();
+				   }
+				}
+				requirement.setRequirementId(requirementid);
+				requirement.setRequirementName(requirementname);
+				requirement.setRequirementText(requirementtextString);
+				ConnectHelper.insertRequirement(requirement, key, rowID);
+
+			}
 			
 			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 			IWorkbenchPage page = window.getActivePage();

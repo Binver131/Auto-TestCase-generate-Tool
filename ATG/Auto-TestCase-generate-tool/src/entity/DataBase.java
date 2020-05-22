@@ -19,6 +19,10 @@ public class DataBase {
 		return (Model[]) models.values().toArray(new Model[models.size()]);
 	}
 	
+	public HashMap<String, Model> getModels() {
+		return models;
+	}
+	
 	public boolean hasModel(Model model) {
 		return models.containsValue(model);
 	}

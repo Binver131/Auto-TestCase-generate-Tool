@@ -107,6 +107,10 @@
             id="Auto-TestCase-generate-tool.manalDesignCommand"
             name="手动设计需求">
       </command>
+      <command
+            id="Auto-TestCase-generate-tool.DeleteModelCommand"
+            name="刪除模型">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -357,6 +361,27 @@
                label="属性"
                style="push">
          </command>
+         <command
+               commandId="Auto-TestCase-generate-tool.DeleteModelCommand"
+               icon="platform:/plugin/org.eclipse.ui/icons/full/etool16/delete_edit.png"
+               label="刪除此模型"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="true"
+                        operator="or">
+                     <or>
+                        <instanceof
+                              value="entity.Model">
+                        </instanceof>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -394,6 +419,10 @@
       <handler
             class="handlers.ManualDesignHandler"
             commandId="Auto-TestCase-generate-tool.manalDesignCommand">
+      </handler>
+      <handler
+            class="handlers.DeleteModelHandler"
+            commandId="Auto-TestCase-generate-tool.DeleteModelCommand">
       </handler>
    </extension>
    <extension
