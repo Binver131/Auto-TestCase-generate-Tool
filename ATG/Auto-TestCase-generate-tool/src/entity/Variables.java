@@ -8,14 +8,14 @@ package entity;
 * @date 2020年5月14日
  */
 public class Variables {
-	private int variablesID; 		//变量ID
+	private String variablesID; 		//变量ID
 	private String variablesName;	//变量名称
-	private int variablesTypeID;	//变量类型ID
+	private String variablesTypeID;	//变量类型ID
 	private String Type;			//变量在需求在位于什么位置{前置条件，输入变量，输出变量}
-	public int getVariablesID() {
+	public String getVariablesID() {
 		return variablesID;
 	}
-	public void setVariablesID(int variablesID) {
+	public void setVariablesID(String variablesID) {
 		this.variablesID = variablesID;
 	}
 	public String getVariablesName() {
@@ -24,10 +24,10 @@ public class Variables {
 	public void setVariablesName(String variablesName) {
 		this.variablesName = variablesName;
 	}
-	public int getVariablesTypeID() {
+	public String getVariablesTypeID() {
 		return variablesTypeID;
 	}
-	public void setVariablesTypeID(int variablesTypeID) {
+	public void setVariablesTypeID(String variablesTypeID) {
 		this.variablesTypeID = variablesTypeID;
 	}
 	@Override

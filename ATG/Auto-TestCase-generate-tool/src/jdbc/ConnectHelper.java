@@ -30,7 +30,7 @@ public class ConnectHelper {
 	//模型库
 	private static DataBase database = null;
 	
-	private static List<Variables> variableslist;
+
 	//数据库连接
 	private static Connection con;
 	// 驱动程序名
@@ -46,7 +46,12 @@ public class ConnectHelper {
 	 * 
 	* 私有化构造函数，让它不能实例化
 	 */
+	
+	
+	
 	private ConnectHelper() {}
+	
+	
 	/**
 	 * 
 	* @Title: getDataBaseInstance  
@@ -81,7 +86,6 @@ public class ConnectHelper {
 	
 	public static void initDataBase() {
 		database = new DataBase();
-		variableslist = new ArrayList<Variables>();
 		// 遍历查询结果集
 		try {
 			// 加载驱动程序
@@ -149,13 +153,13 @@ public class ConnectHelper {
 								Variables var = new Variables();
 								while (result.next()) {
 									
-									var.setVariablesID(Integer.parseInt(ID, 10));
+									var.setVariablesID(ID);
 									var.setVariablesName(result.getString("variables_name"));
-									var.setVariablesTypeID(result.getInt("variables_type"));
+									var.setVariablesTypeID(result.getString("variables_type"));
 								}
 								
 								requirement.addPreConVar(var);
-								variableslist.add(var);
+								model.addVariable(var);
 								preConVarsStatement.close();
 							}
 						}
@@ -168,13 +172,13 @@ public class ConnectHelper {
 								Variables var = new Variables();
 								while (result.next()) {
 	
-									var.setVariablesID(Integer.parseInt(ID, 10));
+									var.setVariablesID(ID);
 									var.setVariablesName(result.getString("variables_name"));
-									var.setVariablesTypeID(result.getInt("variables_type"));
+									var.setVariablesTypeID(result.getString("variables_type"));
 								}
 	
 								requirement.addInputVar(var);
-								variableslist.add(var);
+								model.addVariable(var);
 								inputStatement.close();
 							}
 						}
@@ -187,12 +191,12 @@ public class ConnectHelper {
 								Variables var = new Variables();
 								while (result.next()) {
 	
-									var.setVariablesID(Integer.parseInt(ID, 10));
+									var.setVariablesID(ID);
 									var.setVariablesName(result.getString("variables_name"));
-									var.setVariablesTypeID(result.getInt("variables_type"));
+									var.setVariablesTypeID(result.getString("variables_type"));
 								}
 								requirement.addOutputVar(var);
-								variableslist.add(var);
+								model.addVariable(var);
 								outputStatement.close();
 							}
 						}
@@ -285,14 +289,25 @@ public class ConnectHelper {
 		return null;
 	}
 	
-	/**  
-	* @Title: insertModel  
-	* @Description: TODO(插入模型到数据库，插入之前先要判断模型是否已经存在)  
-	* @param  model 待插入的模型
-	* @return void    返回类型  
-	* @throws  
-	*/  
-	public static String insertRowRequirement(RowRequirement rowRequirement,String modelID) {
+	
+	public static String addRowRequirement(RowRequirement rowRequirement,String modelID) {
+		
+		//这里可以做些判空、去重操作
+		for(RowRequirement rowrequire:database.getChild(modelID).getChildren()) {
+			if(rowrequire.getName().equals(rowRequirement.getName())) {
+				return rowrequire.getDbId();
+			}
+		}
+		String rowidString = insertRowRequirement(rowRequirement, modelID);
+		rowRequirement.setDbId(rowidString);
+		database.getChild(modelID).addChild(rowRequirement);	
+		return rowidString;
+	}
+	
+	
+	
+
+	private static String insertRowRequirement(RowRequirement rowRequirement,String modelID) {
 		initCon();
 		// TODO Auto-generated method stub
 		String sql="insert into rowrequirement(Name,content,model)values('"+rowRequirement.getName()+"','"+rowRequirement.getContent()+"',"+modelID+")";
@@ -336,13 +351,24 @@ public class ConnectHelper {
 	* @throws  
 	*/  
 	
-	public static String insertVariables(Variables variables,String modelID) {
-		initCon();
-		for(Variables var:variableslist) {
+	public static String addVariables(Variables variables,String modelID) {
+		
+		for(Variables var:database.getChild(modelID).getVariablesMap().values()) {
 			if(var.getVariablesName().equals(variables.getVariablesName())) {
-				return var.getVariablesID()+"";
+				return var.getVariablesID();
 			}
 		}
+		String varidString = insertVariables(variables, modelID);
+		variables.setVariablesID(varidString);
+		database.getChild(modelID).addVariable(variables);		
+		return varidString;
+		
+	}
+	
+	
+	private static String insertVariables(Variables variables,String modelID) {
+		initCon();
+		
 		String sql="INSERT INTO variablestable(variables_name,variables_type,model) VALUES ('"+variables.getVariablesName()+"',"+variables.getVariablesTypeID()+","+modelID+")";
 		try {
 			java.sql.PreparedStatement insertVariablesStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -350,8 +376,7 @@ public class ConnectHelper {
 			
 			ResultSet key = insertVariablesStatement.getGeneratedKeys();
 			if(key.next()) {
-				variables.setVariablesID(Integer.parseInt(key.getString(1)));
-				variableslist.add(variables);
+				
 				return key.getString(1);
 			}
 		} catch (SQLException e) {
@@ -362,6 +387,26 @@ public class ConnectHelper {
 		return null;
 	}
 	
+	//这个返回值暂时没有用
+	public static String addRequirement(Requirement requirement,String modelID,String rowID) {
+		for(RowRequirement rowrequire:database.getChild(modelID).getChildren()) {
+			if(rowrequire.getDbId().equals(rowID)) {
+				for(Requirement require : rowrequire.getChildren()) {
+					if(require.getRequirementName().equals(requirement.getRequirementName())) {
+						return require.getDbId();
+					}
+				}
+				String requireidString = insertRequirement(requirement, modelID, rowID);
+				requirement.setDbId(requireidString);
+				rowrequire.addChild(requirement);
+				return requireidString;
+			}
+			
+		}
+		return null;
+	}
+	
+	
 	
 	/**  
 	* @Title: insertRequirement  
@@ -371,7 +416,7 @@ public class ConnectHelper {
 	* @throws  
 	*/  
 	
-	public static void insertRequirement(Requirement requirement,String modelID,String rowID) {
+	private static String insertRequirement(Requirement requirement,String modelID,String rowID) {
 		initCon();
 		String preConVars = "";
 		String inputVars = "";
@@ -389,15 +434,38 @@ public class ConnectHelper {
 		try {
 			java.sql.PreparedStatement insertRequirementStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			insertRequirementStatement.executeUpdate();
-//			ResultSet key = insertRequirementStatement.getGeneratedKeys();
-//			if(key.next()) {	
-//				requirement.setDbId(key.getInt(1)+"");
-//			}
+			ResultSet key = insertRequirementStatement.getGeneratedKeys();
+			if(key.next()) {	
+				//requirement.setDbId(key.getInt(1)+"");
+				return key.getString(1);
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return null;
 	}
+	
+	
+	public static String addType(Type type,String modelID) {
+		for(Map.Entry<String, Model> entry : database.getModels().entrySet()) {
+			if(entry.getKey().equals(modelID)) {
+				for(Map.Entry<String, Type> dbType :entry.getValue().getTypeMap().entrySet()) {
+					if(dbType.getValue().getTypename().equals(type.getTypename())) {
+						return dbType.getValue().getTypeID();					
+					}else {
+							;
+					}
+				}
+				String typeid = insertType(type, modelID);
+				type.setTypeID(typeid);
+				database.getChild(modelID).addType(type);
+				return typeid;
+			}
+		}
+		return null;
+	}
+	
 	/**  
 	* @Title: insertType  
 	* @Description: TODO(用于插入类型)  
@@ -405,13 +473,13 @@ public class ConnectHelper {
 	* @return void    
 	* @throws  
 	*/
-	public static String insertType(Type type,String modelID) {
+	private static String insertType(Type type,String modelID) {
 		initCon();
-		String sql = "INSERT INTO typetable(type_name,type_range,model,size) VALUES ('"+type.getTypename()+"','"+type.getTyperange()+"',"+modelID+","+type.getSizeString()+")";
+		String sql = "INSERT INTO typetable(type_name,type_range,model,size,typerowname) VALUES ('"+type.getTypename()+"','"+type.getTyperange()+"',"+modelID+","+type.getSizeString()+",'"+type.getBasetypename()+"')";
 		try {
-			java.sql.PreparedStatement insertRequirementStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-			insertRequirementStatement.executeUpdate();
-			ResultSet key = insertRequirementStatement.getGeneratedKeys();
+			java.sql.PreparedStatement insertTypeStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			insertTypeStatement.executeUpdate();
+			ResultSet key = insertTypeStatement.getGeneratedKeys();
 			if(key.next()) {	
 				return key.getString(1);
 			}
@@ -419,7 +487,6 @@ public class ConnectHelper {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		return null;
 	}
 	
@@ -435,5 +502,96 @@ public class ConnectHelper {
 	public static void insertTestCase(TestCase testCase,String modelID) {
 		
 	}
+	
+	/**  
+	* @Title: deleteVariable
+	* @Description: TODO(删除变量)  
+	* @param   
+	* @return void    
+	* @throws  
+	*/
+	public static void removeVariable(String modelID) {
+		
+		//这里暂时没有加从database里删去variable,等需要有这种细节操作的时候加
+		deleteVariable(modelID);
+	}
+	
+	private static void deleteVariable(String modelID) {
+		initCon();
+		String sql="DELETE FROM variablestable WHERE variablestable.model = "+modelID;
+		try {
+			java.sql.PreparedStatement deleteVariableStatement = con.prepareStatement(sql);
+			deleteVariableStatement.execute();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static void remodeType(String modelID) {
+		//这里暂时没有加从database里删去variable,等需要有这种细节操作的时候加
+		deleteType(modelID);
+	}
+	
+	private static void deleteType(String modelID) {
+		initCon();
+		String sql="DELETE FROM typetable WHERE typetable.model = "+modelID;
+		try {
+			java.sql.PreparedStatement deleteTypeStatement = con.prepareStatement(sql);
+			deleteTypeStatement.execute();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static void removeRequirement(String modelID) {
+		//这里暂时没有加从database里删去variable,等需要有这种细节操作的时候加
+		deleteRequirement(modelID);
+	}
+	
+	private static void deleteRequirement(String modelID) {
+		initCon();
+		String sql="DELETE FROM requirementtable WHERE requirementtable.model = "+modelID;
+		try {
+			java.sql.PreparedStatement deleteRequirementStatement = con.prepareStatement(sql);
+			deleteRequirementStatement.execute();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static void removeRowRequirement(String modelID) {
+		deleteRowRequirement(modelID);
+	}
+	private static void deleteRowRequirement(String modelID) {
+		initCon();
+		String sql="DELETE FROM rowrequirement WHERE rowrequirement.model = "+modelID;
+		try {
+			java.sql.PreparedStatement deleteRowRequirementStatement = con.prepareStatement(sql);
+			deleteRowRequirementStatement.execute();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static void removeModel(String modelID) {
+		database.removeChild(modelID);
+		deleteModel(modelID);
+	}
+	private static void deleteModel(String modelID) {
+		initCon();
+		String sql="DELETE FROM models WHERE models.`No` = "+modelID;
+		try {
+			java.sql.PreparedStatement deleteModelStatement = con.prepareStatement(sql);
+			deleteModelStatement.execute();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	
 }

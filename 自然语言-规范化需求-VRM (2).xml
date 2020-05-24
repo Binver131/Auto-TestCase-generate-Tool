@@ -24,10 +24,10 @@
       <condition>ipDMIEngineLayoutNormal=true</condition>
       <content>当满足以下条件，opEngineHFEngineLayout应能够提供Normal：ipDMIEngineLayoutNormal=true。</content>
       <inputs>
-        <input type="boolean">ipDMIEngineLayoutNormal</input>
+        <input type="boolean" baseType="boolean" range="true,false">ipDMIEngineLayoutNormal</input>
       </inputs>
       <outputs>
-        <output type="outputtype">opEngineHFEngineLayout</output>
+        <output type="engineLayout" baseType="Enumerated" range="Compressed,Normal">opEngineHFEngineLayout</output>
       </outputs>
     </standardRequirement>
     <standardRequirement ID="SLreq2" relateReq="NLreq2" type="genralConditon" name="Name2">
@@ -37,11 +37,11 @@
       <condition>ipDMIEngineLayoutNormal=FALSE OR ipDMIEngineLayoutNormalStatus = Invalid</condition>
       <content>当满足以下条件，opEngineHFEngineLayout应能够提供Compressed：ipDMIEngineLayoutNormal=FALSE OR ipDMIEngineLayoutNormalStatus = Invalid.</content>
       <inputs>
-        <input type="boolean">ipDMIEngineLayoutNormal</input>
-        <input type="valueStauts">ipDMIEngineLayoutNormalStatus</input>
+        <input type="boolean" baseType="boolean" range="true,false">ipDMIEngineLayoutNormal</input>
+        <input type="valueStauts" baseType="Enumerated" range="Invalid,Valid">ipDMIEngineLayoutNormalStatus</input>
       </inputs>
       <outputs>
-       <output type="outputtype">opEngineHFEngineLayout</output>
+       <output type="engineLayout" baseType="Enumerated" range="Compressed,Normal">opEngineHFEngineLayout</output>
       </outputs>
     </standardRequirement>
     <standardRequirement ID="SLreq3" relateReq="NLreq3" type="genralConditon" name="Name3">
@@ -51,14 +51,14 @@
       <condition>ipFDUConfigurationIsMetric = TRUE AND ipFDUConfigurationIsMetricStatus = Valid</condition>
       <content>当满足以下条件，opFDUConfigurationFormat应能够设置为METRIC：ipFDUConfigurationIsMetric = TRUE AND ipFDUConfigurationIsMetricStatus = Valid。</content>
       <inputs>
-        <input type="boolean">ipFDUConfigurationIsMetric</input>
-        <input type="valueStauts">ipFDUConfigurationIsMetricStatus</input>
+        <input type="boolean" baseType="boolean" range="true,false">ipFDUConfigurationIsMetric</input>
+        <input type="valueStauts" baseType="Enumerated" range="Invalid,Valid">ipFDUConfigurationIsMetricStatus</input>
       </inputs>
       <outputs>
-        <output type="outputtype">opFDUConfigurationFormat</output>
+        <output type="FDUParameterFormat" baseType="Enumerated" range="IMPERIAL,METRIC">opFDUConfigurationFormat</output>
       </outputs>
     </standardRequirement>
-    <standardRequirement ID="SLreq4" relateReq="NLreq3" type="genralConditon" name="Name3">
+    <standardRequirement ID="SLreq4" relateReq="NLreq3" type="genralConditon" name="Name4">
       <subject>opFDUConfigurationFormat</subject>
       <predicate>设置为</predicate>
       <object>IMPERIAL</object>
@@ -66,15 +66,15 @@
       <content>当满足以下条件，opFDUConfigurationFormat应能够设置为IMPERIAL：ipFDUConfigurationIsMetric = FALSE AND ipFDUConfigurationIsMetricStatus = Valid。</content>
      
       <inputs>
-        <input type="boolean">ipFDUConfigurationIsMetric</input>
-        <input type="valueStauts">ipFDUConfigurationIsMetricStatus</input>
+        <input type="boolean" baseType="boolean" range="true,false">ipFDUConfigurationIsMetric</input>
+        <input type="valueStauts" baseType="Enumerated" range="Invalid,Valid">ipFDUConfigurationIsMetricStatus</input>
       </inputs>
       <outputs>
-        <output type="outputtype">opFDUConfigurationFormat</output>
+        <output type="FDUParameterFormat" baseType="Enumerated" range="IMPERIAL,METRIC">opFDUConfigurationFormat</output>
       </outputs>
    
     </standardRequirement>
-    <standardRequirement ID="SLreq5" relateReq="NLreq3" type="genralConditon" name="Name3">
+    <standardRequirement ID="SLreq5" relateReq="NLreq3" type="genralConditon" name="Name5">
       <subject>opFDUConfigurationFormat</subject>
       <predicate>设置为</predicate>
       <object>IMPERIAL</object>
@@ -82,16 +82,16 @@
       <content>当满足以下条件，opFDUConfigurationFormat应能够设置为IMPERIAL：ipFDUConfigurationIsMetric = FALSE AND ipFDUConfigurationIsMetricStatus = Invalid。</content>
     
       <inputs>
-        <input type="boolean">ipFDUConfigurationIsMetric</input>
-        <input type="valueStauts">ipFDUConfigurationIsMetricStatus</input>
+        <input type="boolean" baseType="boolean" range="true,false">ipFDUConfigurationIsMetric</input>
+        <input type="valueStauts" baseType="Enumerated" range="Invalid,Valid">ipFDUConfigurationIsMetricStatus</input>
       </inputs>
       <outputs>
-        <output type="outputtype">opFDUConfigurationFormat</output>
+        <output type="FDUParameterFormat" baseType="Enumerated" range="IMPERIAL,METRIC">opFDUConfigurationFormat</output>
       </outputs>
     
     
     </standardRequirement>
-    <standardRequirement ID="SLreq6" relateReq="NLreq3" type="genralConditon" name="Name3">
+    <standardRequirement ID="SLreq6" relateReq="NLreq3" type="genralConditon" name="Name6">
       <subject>opFDUConfigurationFormat</subject>
       <predicate>设置为</predicate>
       <object>IMPERIAL</object>
@@ -99,38 +99,16 @@
       <content>当满足以下条件，opFDUConfigurationFormat应能够设置为IMPERIAL：ipFDUConfigurationIsMetric = TRUE AND ipFDUConfigurationIsMetricStatus = Invalid。</content>
     
       <inputs>
-        <input type="boolean">ipFDUConfigurationIsMetric</input>
-        <input type="valueStauts">ipFDUConfigurationIsMetricStatus</input>
+        <input type="boolean" baseType="boolean" range="true,false">ipFDUConfigurationIsMetric</input>
+        <input type="valueStauts" baseType="Enumerated" range="Invalid,Valid">ipFDUConfigurationIsMetricStatus</input>
       </inputs>
       <outputs>
-        <output type="outputtype">opFDUConfigurationFormat</output>
+        <output type="FDUParameterFormat" baseType="Enumerated" range="IMPERIAL,METRIC">opFDUConfigurationFormat</output>
       </outputs>
     </standardRequirement>
   </standardRequirements>
 
   <constants/>
-
-      
-
-
-  <types>
-    <type name="engineLayout">
-      <baseType>Enumerated</baseType>
-      <range>Compressed=0,Normal=1</range>
-      <accuracy/>
-    </type>
-    <type name="FDUParameterFormat">
-      <baseType>Enumerated</baseType>
-      <range>IMPERIAL=0,METRIC=1</range>
-      <accuracy/>
-    </type>
-    <type name="valueStauts">
-      <baseType>Enumerated</baseType>
-      <range>Invalid=0,Valid=1</range>
-      <accuracy/>
-    </type>
-  </types>
-
   <tables>
     <table name="opEngineHFEngineLayout" isOutput="1">
       <conditionTable>

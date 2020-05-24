@@ -30,6 +30,7 @@ public class Model {
 	private String text;
 	private List<RowRequirement> children;//–Ë«Û±Ì
 	private Map<String,Type> typeMap;
+	private Map<String,Variables> variablesMap;
 	
 	public void addType(Type type) {
 		typeMap.put(type.getTypeID(),type);
@@ -40,10 +41,28 @@ public class Model {
 	}
 	
 	
+	public Map<String, Type> getTypeMap() {
+		return typeMap;
+	}
+
+	public Map<String, Variables> getVariablesMap() {
+		return variablesMap;
+	}
+
+	public void addVariable(Variables variable) {
+		variablesMap.put(variable.getVariablesID(),variable);
+	}
+	
+	public Variables getVariable(String id) {
+		return variablesMap.get(id);
+	}
+	
+	
 	public Model(String ID) {
 		this.ID = ID;
 		children = new ArrayList<>();
 		typeMap = new HashMap<String, Type>();
+		variablesMap = new HashMap<String,Variables>();
 	}
 	public String getName() {
 		return name;

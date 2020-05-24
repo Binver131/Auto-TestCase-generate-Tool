@@ -14,6 +14,9 @@ public class DataBase {
 		models.get(key).setParent(null);
 		models.remove(key);
 	}
+	public Model getChild(String key) {
+		return models.get(key);
+	}
 	public Model[] getChildren() {
 		
 		return (Model[]) models.values().toArray(new Model[models.size()]);

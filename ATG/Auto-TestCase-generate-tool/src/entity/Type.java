@@ -13,8 +13,15 @@ public class Type {
 	private String typerange;	//类型名
 	private String modelID;
 	private String sizeString;
+	private String basetypename;   //类型基本类型的名称 
 	
 	
+	public String getBasetypename() {
+		return basetypename;
+	}
+	public void setBasetypename(String basetypename) {
+		this.basetypename = basetypename;
+	}
 	public String getTypename() {
 		return typename;
 	}

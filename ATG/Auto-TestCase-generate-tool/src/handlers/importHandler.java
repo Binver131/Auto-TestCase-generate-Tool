@@ -67,26 +67,27 @@ public class importHandler extends AbstractHandler{
 			String key = ConnectHelper.addModel(model);
 			
 			
-			//解析类型
-			NodeList typenode = document.getElementsByTagName("type");
-			for(int i=0;i<typenode.getLength();i++) {
-				Type type= new Type();
-				String typename = typenode.item(i).getAttributes().getNamedItem("name").getTextContent();
-				String basetype = document.getElementsByTagName("baseType").item(i).getFirstChild().getNodeValue();
-				String typerange = document.getElementsByTagName("range").item(i).getFirstChild().getNodeValue();
-				if(basetype.equals("Enumerated")) {
-					typerange= "["+typerange+"]";
-				}else {
-					//一共有八个基础类型，需要按类型对自定义类型的范围字符串处理
-				}
-				type.setTypename(basetype);
-				type.setTyperange(typerange);
-				//长度最好也根据不同的基础类型改变
-				type.setSizeString("4");
-				//这里返回的类型id还没有和变量关联
-				ConnectHelper.insertType(type, key);
-			}
-			
+//			//解析类型
+//			NodeList typenode = document.getElementsByTagName("type");
+//			for(int i=0;i<typenode.getLength();i++) {
+//				Type type= new Type();
+//				String typename = typenode.item(i).getAttributes().getNamedItem("name").getTextContent();
+//				String basetype = document.getElementsByTagName("baseType").item(i).getFirstChild().getNodeValue();
+//				String typerange = document.getElementsByTagName("range").item(i).getFirstChild().getNodeValue();
+//				  
+//				
+//				if(basetype.equals("Enumerated")) {
+//					typerange= "["+typerange+"]";
+//				}else {
+//					//一共有八个基础类型，需要按类型对自定义类型的范围字符串处理
+//				}
+//				type.setTypename(basetype);
+//				type.setTyperange(typerange);
+//				//长度最好也根据不同的基础类型改变
+//				type.setSizeString("4");
+//				//这里返回的类型id还没有和变量关联
+//				ConnectHelper.insertType(type, key);
+//			}
 			
 			//解析原始需求
 			Map<String, String> rowmap = new HashMap<String, String>();
@@ -98,7 +99,7 @@ public class importHandler extends AbstractHandler{
 				rowRequirement.setName(rowrequirementname);
 				rowRequirement.setContent(moderowrequirementtext);
 				rowRequirement.setParent(model);
-				rowmap.put(ConnectHelper.insertRowRequirement(rowRequirement,key), rowrequirementnode.item(i).getAttributes().getNamedItem("ID").getTextContent());
+				rowmap.put(ConnectHelper.addRowRequirement(rowRequirement,key), rowrequirementnode.item(i).getAttributes().getNamedItem("ID").getTextContent());
 			}
 			
 			//解析需求
@@ -116,10 +117,30 @@ public class importHandler extends AbstractHandler{
 					if(variableinputnode.item(i).getChildNodes().item(j).getNodeName().equals("input")) {
 						Variables variables = new Variables();
 						String variableinputname =  variableinputnode.item(i).getChildNodes().item(j).getFirstChild().getNodeValue();
-						int variableinputtype = 1;
+						
+						//解析类型
+						//类型的名称暂时没有用到
+						String typename = variableinputnode.item(i).getChildNodes().item(j).getAttributes().getNamedItem("type").getTextContent();
+						String basetype = variableinputnode.item(i).getChildNodes().item(j).getAttributes().getNamedItem("baseType").getTextContent();
+						String typerange = variableinputnode.item(i).getChildNodes().item(j).getAttributes().getNamedItem("range").getTextContent();
+
+						if(basetype.equals("Enumerated")) {
+							typerange= "["+typerange+"]";
+						}else if(basetype.equals("boolean")){
+							typerange= "["+typerange+"]";
+						}else {
+							//一共有八个基础类型，需要按类型对自定义类型的范围字符串处理
+							//Boolean Integer Float Double Enumerated String Char Unsigned
+						}
+						Type type= new Type();
+						type.setTypename(typename);
+						type.setTyperange(typerange);
+						type.setBasetypename(basetype);
+						type.setSizeString("4");			
+						String variableinputtype = ConnectHelper.addType(type, key);
 						variables.setVariablesName(variableinputname);
 						variables.setVariablesTypeID(variableinputtype);
-						variables.setVariablesID(Integer.parseInt(ConnectHelper.insertVariables(variables, key)));
+						variables.setVariablesID(ConnectHelper.addVariables(variables, key));
 						requirement.addInputVar(variables);
 					}
 				}
@@ -128,10 +149,27 @@ public class importHandler extends AbstractHandler{
 					if(variableoutputnode.item(i).getChildNodes().item(j).getNodeName().equals("output")) {
 						Variables variables = new Variables();
 						String variableoutputname =  variableoutputnode.item(i).getChildNodes().item(j).getFirstChild().getNodeValue();
-						int variableoutputtype = 1;
+						String typename = variableoutputnode.item(i).getChildNodes().item(j).getAttributes().getNamedItem("type").getTextContent();
+						String basetype = variableoutputnode.item(i).getChildNodes().item(j).getAttributes().getNamedItem("baseType").getTextContent();
+						String typerange = variableoutputnode.item(i).getChildNodes().item(j).getAttributes().getNamedItem("range").getTextContent();
+
+						if(basetype.equals("Enumerated")) {
+							typerange= "["+typerange+"]";
+						}else if(basetype.equals("boolean")){
+							typerange= "["+typerange+"]";
+						}else {
+							//一共有八个基础类型，需要按类型对自定义类型的范围字符串处理
+							//Boolean Integer Float Double Enumerated String Char Unsigned
+						}
+						Type type= new Type();
+						type.setTypename(typename);
+						type.setTyperange(typerange);
+						type.setBasetypename(basetype);
+						type.setSizeString("4");			
+						String variableoutputtype = ConnectHelper.addType(type, key);
 						variables.setVariablesName(variableoutputname);
 						variables.setVariablesTypeID(variableoutputtype);
-						variables.setVariablesID(Integer.parseInt(ConnectHelper.insertVariables(variables, key)));
+						variables.setVariablesID(ConnectHelper.addVariables(variables, key));
 						requirement.addOutputVar(variables);
 					}
 				}
@@ -146,7 +184,7 @@ public class importHandler extends AbstractHandler{
 				requirement.setRequirementId(requirementid);
 				requirement.setRequirementName(requirementname);
 				requirement.setRequirementText(requirementtextString);
-				ConnectHelper.insertRequirement(requirement, key, rowID);
+				ConnectHelper.addRequirement(requirement, key, rowID);
 
 			}
 			
