@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : localhost_3306
+ Source Server         : 本地
  Source Server Type    : MySQL
- Source Server Version : 80020
+ Source Server Version : 80015
  Source Host           : localhost:3306
  Source Schema         : atg
 
  Target Server Type    : MySQL
- Target Server Version : 80020
+ Target Server Version : 80015
  File Encoding         : 65001
 
- Date: 20/05/2020 14:23:50
+ Date: 24/05/2020 10:40:15
 */
 
 SET NAMES utf8mb4;
@@ -22,36 +22,35 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `models`;
 CREATE TABLE `models`  (
-  `No` int(0) NOT NULL AUTO_INCREMENT,
+  `No` int(11) NOT NULL AUTO_INCREMENT,
   `model_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `model_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `model_text` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `Model_Class` enum('A','B','C') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   PRIMARY KEY (`No`) USING BTREE,
   INDEX `model_id`(`model_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of models
 -- ----------------------------
 INSERT INTO `models` VALUES (1, 'M1.0', 'PFD', '主显示面板', 'A');
 INSERT INTO `models` VALUES (2, 'M2.0', 'ND', '导航显示面板', 'B');
-INSERT INTO `models` VALUES (3, 'V1.0', 'EICAS', '发动机显示和机组警告系统需求模型', 'C');
 
 -- ----------------------------
 -- Table structure for requirementtable
 -- ----------------------------
 DROP TABLE IF EXISTS `requirementtable`;
 CREATE TABLE `requirementtable`  (
-  `No` int(0) NOT NULL AUTO_INCREMENT,
+  `No` int(11) NOT NULL AUTO_INCREMENT,
   `requirement_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `requirement_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `requirement_text` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `requirement_condition` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `requirement_input` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `requirement_output` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  `model` int(0) NULL DEFAULT NULL,
-  `RowRequirement` int(0) NULL DEFAULT NULL,
+  `model` int(11) NULL DEFAULT NULL,
+  `RowRequirement` int(11) NULL DEFAULT NULL,
   PRIMARY KEY (`No`) USING BTREE,
   INDEX `model`(`model`) USING BTREE,
   INDEX `RowRequirement`(`RowRequirement`) USING BTREE,
@@ -71,14 +70,14 @@ INSERT INTO `requirementtable` VALUES (3, 'R1.3', 'requirement3', 'null', '5', '
 -- ----------------------------
 DROP TABLE IF EXISTS `rowrequirement`;
 CREATE TABLE `rowrequirement`  (
-  `No` int(0) NOT NULL AUTO_INCREMENT,
+  `No` int(11) NOT NULL AUTO_INCREMENT,
   `Name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `content` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `model` int(0) NULL DEFAULT NULL,
+  `model` int(11) NULL DEFAULT NULL,
   PRIMARY KEY (`No`) USING BTREE,
   INDEX `model`(`model`) USING BTREE,
   CONSTRAINT `rowrequirement_ibfk_1` FOREIGN KEY (`model`) REFERENCES `models` (`No`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of rowrequirement
@@ -90,8 +89,8 @@ INSERT INTO `rowrequirement` VALUES (1, '油门报警', '原始需求内容，�
 -- ----------------------------
 DROP TABLE IF EXISTS `testcasetable`;
 CREATE TABLE `testcasetable`  (
-  `testcase_id` int(0) NOT NULL AUTO_INCREMENT,
-  `requirementid` int(0) NULL DEFAULT NULL,
+  `testcase_id` int(11) NOT NULL AUTO_INCREMENT,
+  `requirementid` int(11) NULL DEFAULT NULL,
   `testcase_condition` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `testcase_input` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `testcase_output` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
@@ -122,11 +121,12 @@ INSERT INTO `testcasetable` VALUES (11, 3, 'process', '8', 'on', 'auto', 'equal'
 -- ----------------------------
 DROP TABLE IF EXISTS `typetable`;
 CREATE TABLE `typetable`  (
-  `type_id` int(0) NOT NULL AUTO_INCREMENT,
+  `type_id` int(11) NOT NULL AUTO_INCREMENT,
   `type_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `type_range` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  `model` int(0) NULL DEFAULT NULL,
+  `model` int(11) NULL DEFAULT NULL,
   `size` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `typerowname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   PRIMARY KEY (`type_id`) USING BTREE,
   INDEX `model`(`model`) USING BTREE,
   CONSTRAINT `typetable_ibfk_1` FOREIGN KEY (`model`) REFERENCES `models` (`No`) ON DELETE RESTRICT ON UPDATE RESTRICT
@@ -135,19 +135,19 @@ CREATE TABLE `typetable`  (
 -- ----------------------------
 -- Records of typetable
 -- ----------------------------
-INSERT INTO `typetable` VALUES (1, 'int', '[-65536,65535]', 1, '4');
-INSERT INTO `typetable` VALUES (2, 'emmu', '[wait,process]', 1, '4');
-INSERT INTO `typetable` VALUES (3, 'emmu', '[off,on]', 1, '4');
+INSERT INTO `typetable` VALUES (1, 'int', '[-65536,65535]', 1, '4', 'int');
+INSERT INTO `typetable` VALUES (2, 'emmu', '[wait,process]', 1, '4', 'emmu');
+INSERT INTO `typetable` VALUES (3, 'emmu', '[off,on]', 1, '4', 'emmu');
 
 -- ----------------------------
 -- Table structure for variablestable
 -- ----------------------------
 DROP TABLE IF EXISTS `variablestable`;
 CREATE TABLE `variablestable`  (
-  `variables_id` int(0) NOT NULL AUTO_INCREMENT,
+  `variables_id` int(11) NOT NULL AUTO_INCREMENT,
   `variables_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  `variables_type` int(0) NULL DEFAULT NULL,
-  `model` int(0) NULL DEFAULT NULL,
+  `variables_type` int(11) NULL DEFAULT NULL,
+  `model` int(11) NULL DEFAULT NULL,
   PRIMARY KEY (`variables_id`) USING BTREE,
   INDEX `variables_type`(`variables_type`) USING BTREE,
   INDEX `variablestable_ibfk_2`(`model`) USING BTREE,

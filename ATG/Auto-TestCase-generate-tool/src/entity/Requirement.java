@@ -3,6 +3,8 @@ package entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import jdbc.ConnectHelper;
+
 /**
  * 
 * @ClassName: Requirement  
@@ -20,7 +22,8 @@ public class Requirement {
 	private List<Variables> inputVars;			//输入变量列表
 	private List<Variables> outputVars;			//输出变量列表
 	private List<TestCase> testcases;			//测试用例列表
-	public Requirement() {
+	
+	public Requirement() {  
 		preConditionVars = new ArrayList<>();
 		inputVars = new ArrayList<>();
 		outputVars = new ArrayList<>();
@@ -48,12 +51,14 @@ public class Requirement {
 	}
 	
 	public Variables[] getOutputVars() {
+		
 		return (Variables[]) outputVars.toArray(new Variables[outputVars.size()]);
 	}
 	public Variables[] getInputVars() {
 		return (Variables[]) inputVars.toArray(new Variables[inputVars.size()]);
 	}
 	public Variables[] getPreConVars() {
+		DataBase root = ConnectHelper.getDataBaseInstance();
 		return (Variables[]) preConditionVars.toArray(new Variables[preConditionVars.size()]);
 	}
 	
