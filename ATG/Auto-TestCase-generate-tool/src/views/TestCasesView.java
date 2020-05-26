@@ -152,13 +152,13 @@ public class TestCasesView extends ViewPart implements ISelectionListener{
 
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if(selection!= null){
+		if(selection!= null && selection instanceof IStructuredSelection){
 			IStructuredSelection is = (IStructuredSelection)selection;
 			
 			
 			if(is.getFirstElement() instanceof Requirement) {
 				
-				
+			
 				Requirement requirement = (Requirement)is.getFirstElement();
 				requireID.setText(requirement.getRequirementName());
 				requireNum.setText(requirement.getTestcases().length+"");
@@ -205,9 +205,7 @@ public class TestCasesView extends ViewPart implements ISelectionListener{
 					
 					item.setText(testcase.getTestcaseID()+"");
 					item.setText(columnCount++,testcase.getTestcaseEvaluate());
-					
 					for(String var:testcase.getTestcaseInput().split(",")) {
-						
 						item.setText(columnCount++,var);
 					}
 					
