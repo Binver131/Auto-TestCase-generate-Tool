@@ -64,6 +64,12 @@
             name="INFO"
             restorable="true">
       </view>
+      <view
+            class="org.eclipse.nebula.examples.ExamplesView"
+            id="Auto-TestCase-generate-tool.view3"
+            name="name"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

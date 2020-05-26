@@ -1,9 +1,10 @@
+
 /**  
 * @Title: ManualDesignHandler.java  
 * @Package handlers  
-* @Description: TODO(ÓÃÒ»¾ä»°ÃèÊö¸ÃÎÄ¼ş×öÊ²Ã´)  
+* @Description: TODO(ç”¨ä¸€å¥è¯æè¿°è¯¥æ–‡ä»¶åšä»€ä¹ˆ)  
 * @author Binver131  
-* @date 2020Äê5ÔÂ14ÈÕ  
+* @date 2020å¹´5æœˆ14æ—¥  
 * @version V1.0  
 */
 package handlers;
@@ -27,9 +28,9 @@ import views.TestCasesView;
 
 /**
  * @ClassName: ManualDesignHandler
- * @Description: TODO(ÕâÀïÓÃÒ»¾ä»°ÃèÊöÕâ¸öÀàµÄ×÷ÓÃ)
+ * @Description: TODO(è¿™é‡Œç”¨ä¸€å¥è¯æè¿°è¿™ä¸ªç±»çš„ä½œç”¨)
  * @author Binver131
- * @date 2020Äê5ÔÂ14ÈÕ
+ * @date 2020å¹´5æœˆ14æ—¥
  */
 public class ManualDesignHandler extends AbstractHandler {
 
@@ -40,10 +41,10 @@ public class ManualDesignHandler extends AbstractHandler {
 		IStructuredSelection is = (IStructuredSelection) selection;
 		if (is.getFirstElement() instanceof Requirement) {
 			requirement = (Requirement) is.getFirstElement();
-			ConsoleHandler.info(requirement.getRequirementName() + "ĞÂ½¨²âÊÔÓÃÀı");
-			System.out.println(requirement.getRequirementName() + "ĞÂ½¨²âÊÔÓÃÀı");
+			ConsoleHandler.info(requirement.getRequirementName() + "æ–°å»ºæµ‹è¯•ç”¨ä¾‹");
+			System.out.println(requirement.getRequirementName() + "æ–°å»ºæµ‹è¯•ç”¨ä¾‹");
 		}
-		// ÏÔÊ¾½çÃæ
+		// æ˜¾ç¤ºç•Œé¢
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		IWorkbenchPage page = window.getActivePage();
 		page.hideView(page.findView(TestCasesView.ID));
@@ -53,10 +54,10 @@ public class ManualDesignHandler extends AbstractHandler {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		ConsoleHandler.info("ÏÔÊ¾±à¼­ÊÓÍ¼");
-		// »ñÈ¡¶ÔÏó
+		ConsoleHandler.info("æ˜¾ç¤ºç¼–è¾‘è§†å›¾");
+		// è·å–å¯¹è±¡
 
-		// ´«²Î
+		// ä¼ å‚
 		((ManualDesignView) page.findView(ManualDesignView.ID)).init(requirement);
 
 		return null;
