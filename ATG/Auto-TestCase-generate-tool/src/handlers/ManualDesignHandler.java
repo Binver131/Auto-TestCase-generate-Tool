@@ -1,39 +1,50 @@
+
 /**  
 * @Title: ManualDesignHandler.java  
 * @Package handlers  
-* @Description: TODO(ÓÃÒ»¾ä»°ÃèÊö¸ÃÎÄ¼ş×öÊ²Ã´)  
+* @Description: TODO(ç”¨ä¸€å¥è¯æè¿°è¯¥æ–‡ä»¶åšä»€ä¹ˆ)  
 * @author Binver131  
-* @date 2020Äê5ÔÂ14ÈÕ  
+* @date 2020å¹´5æœˆ14æ—¥  
 * @version V1.0  
-*/  
+*/
 package handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.ViewPart;
 
 import console.ConsoleHandler;
+import entity.Requirement;
 import views.ManualDesignView;
 import views.TestCasesView;
 
-
-
-/**  
-* @ClassName: ManualDesignHandler  
-* @Description: TODO(ÕâÀïÓÃÒ»¾ä»°ÃèÊöÕâ¸öÀàµÄ×÷ÓÃ)  
-* @author Binver131  
-* @date 2020Äê5ÔÂ14ÈÕ    
-*/
-public class ManualDesignHandler extends AbstractHandler{
+/**
+ * @ClassName: ManualDesignHandler
+ * @Description: TODO(è¿™é‡Œç”¨ä¸€å¥è¯æè¿°è¿™ä¸ªç±»çš„ä½œç”¨)
+ * @author Binver131
+ * @date 2020å¹´5æœˆ14æ—¥
+ */
+public class ManualDesignHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		// TODO Auto-generated method stub
+		Requirement requirement = null;
+		ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getSelection();		
+		IStructuredSelection is = (IStructuredSelection) selection;
+		if (is.getFirstElement() instanceof Requirement) {
+			requirement = (Requirement) is.getFirstElement();
+			ConsoleHandler.info(requirement.getRequirementName() + "æ–°å»ºæµ‹è¯•ç”¨ä¾‹");
+			System.out.println(requirement.getRequirementName() + "æ–°å»ºæµ‹è¯•ç”¨ä¾‹");
+		}
+		// æ˜¾ç¤ºç•Œé¢
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		IWorkbenchPage page = window.getActivePage();
 		page.hideView(page.findView(TestCasesView.ID));
@@ -43,10 +54,13 @@ public class ManualDesignHandler extends AbstractHandler{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		ConsoleHandler.info("ÏÔÊ¾±à¼­ÊÓÍ¼");
+		ConsoleHandler.info("æ˜¾ç¤ºç¼–è¾‘è§†å›¾");
+		// è·å–å¯¹è±¡
+
+		// ä¼ å‚
+		((ManualDesignView) page.findView(ManualDesignView.ID)).init(requirement);
+
 		return null;
 	}
-
-
 
 }
