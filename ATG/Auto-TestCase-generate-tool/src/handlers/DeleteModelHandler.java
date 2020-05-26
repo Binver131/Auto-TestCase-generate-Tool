@@ -22,21 +22,6 @@ public class DeleteModelHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		
-		//TODO �Ĕ���ģ�� database�e���Ƴ���ģ��  ���Ĕ������Єh����ģ�� ���yԇ����
-		ISelection selection =  PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getSelection();
-		if(selection!= null && selection instanceof IStructuredSelection){
-			IStructuredSelection is = (IStructuredSelection)selection;
-			
-			
-			if(is.getFirstElement() instanceof Model) {
-				Iterator<Model> it = is.iterator();
-				while (it.hasNext()) {
-					Model model = (Model) it.next();
-					ConsoleHandler.info("The Model "+model.toString()+" will be deleted");
-				}
-			}
-		}
 //		ConnectHelper.removeVariable("4");
 //		ConnectHelper.remodeType("4");
 //		ConnectHelper.removeRequirement("4");
