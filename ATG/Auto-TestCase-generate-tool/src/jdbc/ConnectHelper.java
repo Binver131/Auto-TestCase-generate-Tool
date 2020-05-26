@@ -100,6 +100,7 @@ public class ConnectHelper {
 			while (rs.next()) {
 				Model model = new Model(rs.getString("model_id"));
 				String key = rs.getString("No");
+				model.setDbId(key);
 				model.setName(rs.getString("model_name"));
 				model.setText(rs.getString("model_text"));
 				model.setModelClass(rs.getString("Model_Class"));
@@ -254,8 +255,11 @@ public class ConnectHelper {
 	 */
 	public static String addModel(Model model) {
 		String key = insertModel(model);
-		if(key != null)
+		if(key != null) {
+			model.setDbId(key);
 			database.addChild(key,model);
+		}
+			
 		else
 			ConsoleHandler.error("≤Â»Î ˝æ›ø‚ ß∞‹");
 		return key;
@@ -579,6 +583,10 @@ public class ConnectHelper {
 	
 	public static void removeModel(String modelID) {
 		database.removeChild(modelID);
+		removeVariable(modelID);
+		remodeType(modelID);
+		removeRequirement(modelID);
+		removeRowRequirement(modelID);
 		deleteModel(modelID);
 	}
 	private static void deleteModel(String modelID) {
