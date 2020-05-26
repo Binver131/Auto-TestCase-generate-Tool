@@ -1,5 +1,7 @@
 package views;
 
+import java.util.HashMap;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -47,7 +49,48 @@ public class VariablesView extends ViewPart implements ISelectionListener{
 	private Label requireID ;
 	private Requirement root;
 	private Tree tree;
-	
+	String variablesname=null;
+	String typename=null;
+	String typesize=null;
+	String typerange=null;
+	public class Variablesview{
+		public String type=null;
+		public String size=null;
+		public String range=null;
+		public String typeownname=null;
+		public Variablesview(String type, String size, String range, String typeownname) {
+			super();
+			this.type = type;
+			this.size = size;
+			this.range = range;
+			this.typeownname = typeownname;
+		}
+		public String getTypeownname() {
+			return typeownname;
+		}
+		public void setTypeownname(String typeownname) {
+			this.typeownname = typeownname;
+		}
+		public String getType() {
+			return type;
+		}
+		public void setType(String type) {
+			this.type = type;
+		}
+		public String getSize() {
+			return size;
+		}
+		public void setSize(String size) {
+			this.size = size;
+		}
+		public String getRange() {
+			return range;
+		}
+		public void setRange(String range) {
+			this.range = range;
+		}
+	}
+	public static HashMap<String, Variablesview> varHashMap=new HashMap<String, VariablesView.Variablesview>();
 	class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider{
 
 		@Override
@@ -249,7 +292,7 @@ public class VariablesView extends ViewPart implements ISelectionListener{
 
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if(selection!= null){
+		if(selection!= null && selection instanceof IStructuredSelection){
 			IStructuredSelection is = (IStructuredSelection)selection;
 			if(is.getFirstElement() instanceof Requirement) {
 				
@@ -265,12 +308,13 @@ public class VariablesView extends ViewPart implements ISelectionListener{
 					TreeItem in = new TreeItem(input, SWT.NONE);
 					Type type = root.getParent().getParent().getType(Var.getVariablesTypeID()+"");
 					in.setText(new String[] {Var.getVariablesName(),type.getTypename(),type.getSizeString(),type.getTyperange()});
+					
 				}
 				
 				for (Variables Var : root.getOutputVars()) {
 					TreeItem in = new TreeItem(output, SWT.NONE);
 					Type type = root.getParent().getParent().getType(Var.getVariablesTypeID()+"");
-					in.setText(new String[] {Var.getVariablesName(),type.getTypename(),type.getSizeString(),type.getTyperange()});
+					in.setText(new String[] {Var.getVariablesName(),type.getTypename(),type.getSizeString(),type.getTyperange()});				
 				}
 				
 				for (Variables Var : root.getPreConVars()) {
@@ -278,6 +322,48 @@ public class VariablesView extends ViewPart implements ISelectionListener{
 					Type type = root.getParent().getParent().getType(Var.getVariablesTypeID()+"");
 					in.setText(new String[] {Var.getVariablesName(),type.getTypename(),type.getSizeString(),type.getTyperange()});
 				}
+				for (Variables Var : root.getInputVars()) {
+					Type type = root.getParent().getParent().getType(Var.getVariablesTypeID()+"");
+					varHashMap.put(Var.getVariablesName(), new Variablesview(type.getTypename(),type.getSizeString(),type.getTyperange(),type.getBasetypename()));
+//					String variablesname=Var.getVariablesName();
+//					String typename=type.getTypename();
+//					String typesize=type.getSizeString();
+//					String typerange=type.getTyperange();
+//					Variablesview v= new Variablesview(typename,typesize,typerange,type.getBasetypename());
+//					varHashMap.put(variablesname,v);
+					//varHashMap.put(variablesname, new Variablesview(typename,typesize,typerange,type.getBasetypename()));
+					//in.setText(new String[] {variablesname,typename,typesize,typerange});
+					
+				}
+				
+				for (Variables Var : root.getOutputVars()) {
+					
+					Type type = root.getParent().getParent().getType(Var.getVariablesTypeID()+"");
+					varHashMap.put(Var.getVariablesName(), new Variablesview(type.getTypename(),type.getSizeString(),type.getTyperange(),type.getBasetypename()));
+//					String variablesname=Var.getVariablesName();
+//					String typename=type.getTypename();
+//					String typesize=type.getSizeString();
+//					String typerange=type.getTyperange();
+//					Variablesview v= new Variablesview(typename,typesize,typerange,type.getBasetypename());
+//					varHashMap.put(variablesname,v);
+					//varHashMap.put(Var.getVariablesName(), new Variablesview(type.getTypename(),type.getSizeString(),type.getTyperange()));
+				}
+				
+				for (Variables Var : root.getPreConVars()) {
+					
+					Type type = root.getParent().getParent().getType(Var.getVariablesTypeID()+"");
+					//System.out.println(type.getBasetypename());
+					varHashMap.put(Var.getVariablesName(), new Variablesview(type.getTypename(),type.getSizeString(),type.getTyperange(),type.getBasetypename()));
+//					String variablesname=Var.getVariablesName();
+//					String typename=type.getTypename();
+//					String typesize=type.getSizeString();
+//					String typerange=type.getTyperange();
+//					Variablesview v= new Variablesview(typename,typesize,typerange,type.getBasetypename());
+//					varHashMap.put(variablesname,v);
+					//varHashMap.put(variablesname, new Variablesview(typename,typesize,typerange,type.getBasetypename()));
+					//varHashMap.put(Var.getVariablesName(), new Variablesview(type.getTypename(),type.getSizeString(),type.getTyperange()));
+				}
+				//System.out.println(varHashMap.get("S_A").range);
 				
 			}
 		}

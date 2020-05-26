@@ -116,6 +116,7 @@ public class ConnectHelper {
 	            	type.setTypeID(rs1.getString("type_id"));
 	            	type.setTypename(rs1.getString("type_name"));
 	            	type.setTyperange(rs1.getString("type_range"));
+	            	type.setBasetypename(rs1.getString("typerowname"));
 	            	model.addType(type);
 	            }
 				
