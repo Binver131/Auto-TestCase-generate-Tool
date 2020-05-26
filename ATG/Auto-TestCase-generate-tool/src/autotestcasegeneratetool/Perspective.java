@@ -3,12 +3,7 @@ package autotestcasegeneratetool;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IConsoleConstants;
-
 import console.ConsoleFactory;
 import views.ManualDesignView;
 import views.NavigationView;
@@ -30,20 +25,21 @@ public class Perspective implements IPerspectiveFactory {
 		IFolderLayout navigationFolder = layout.createFolder("需求管理器", IPageLayout.LEFT, 0.75f, editorArea);		
 		navigationFolder.addView(NavigationView.ID);
 		
-		
 		IFolderLayout folder = layout.createFolder("MidFloder", IPageLayout.RIGHT, 0.25f, NavigationView.ID);
 		folder.addPlaceholder(TestCasesView.ID);
 		folder.addPlaceholder(ManualDesignView.ID);
 		folder.addView(TestCasesView.ID);
-		
+		folder.addView("Auto-TestCase-generate-tool.view3");
 		
 		IFolderLayout MessageFolder = layout.createFolder("处理", IPageLayout.RIGHT, 0.75f, TestCasesView.ID);
 		MessageFolder.addView(VariablesView.ID);
-
+		
+		
 		ConsoleFactory cf = new ConsoleFactory();
 		layout.addView(IConsoleConstants.ID_CONSOLE_VIEW, IPageLayout.BOTTOM,
 				0.70f, TestCasesView.ID);
-
+		
+		
 		cf.openConsole();
 		
 		layout.addView(RowReqInfoView.ID, IPageLayout.BOTTOM, 0.70f, NavigationView.ID);

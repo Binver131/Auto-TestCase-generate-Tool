@@ -18,10 +18,29 @@ import views.NavigationView;
 
 public class DeleteModelHandler extends AbstractHandler {
 
+	
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		ConsoleHandler.info("„h³ıÄ£ĞÍ");
-		//TODO Ä”µ“şÄ£ĞÍ databaseÑeÃæÒÆ³ı´ËÄ£ĞÍ  £¬Ä”µ“şìÖĞ„h³ı´ËÄ£ĞÍ ¼°œyÔ‡ÓÃÀı
+		
+		//TODO ï¿½Ä”ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ databaseï¿½eï¿½ï¿½ï¿½Æ³ï¿½ï¿½ï¿½Ä£ï¿½ï¿½  ï¿½ï¿½ï¿½Ä”ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ„hï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ ï¿½ï¿½ï¿½yÔ‡ï¿½ï¿½ï¿½ï¿½
+		ISelection selection =  PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getSelection();
+		if(selection!= null && selection instanceof IStructuredSelection){
+			IStructuredSelection is = (IStructuredSelection)selection;
+			
+			
+			if(is.getFirstElement() instanceof Model) {
+				Iterator<Model> it = is.iterator();
+				while (it.hasNext()) {
+					Model model = (Model) it.next();
+					ConsoleHandler.info("The Model "+model.toString()+" will be deleted");
+				}
+			}
+		}
+//		ConnectHelper.removeVariable("4");
+//		ConnectHelper.remodeType("4");
+//		ConnectHelper.removeRequirement("4");
+//		ConnectHelper.removeRowRequirement("4");
 		
 		ISelection selection =  PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getSelection();
 		  if(selection!= null && selection instanceof IStructuredSelection){
@@ -37,8 +56,9 @@ public class DeleteModelHandler extends AbstractHandler {
 		    }
 		   }
 		  }
+
 		
-		//Ë¢ĞÂ½çÃæ
+		//Ë¢ï¿½Â½ï¿½ï¿½ï¿½
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		IWorkbenchPage page = window.getActivePage();
 		((NavigationView)page.findView(NavigationView.ID)).refresh();

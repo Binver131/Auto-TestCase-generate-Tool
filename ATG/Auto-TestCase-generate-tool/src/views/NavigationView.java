@@ -144,7 +144,7 @@ public class NavigationView extends ViewPart {
 	    parent.setMenu(menu);
 	    getSite().registerContextMenu(menuManager, null);
 	    
-	    
+	   
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());

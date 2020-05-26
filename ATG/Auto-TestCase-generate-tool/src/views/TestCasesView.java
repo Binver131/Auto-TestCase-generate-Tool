@@ -2,6 +2,7 @@ package views;
 
 
 import java.util.Date;
+import java.util.Iterator;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -9,6 +10,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -22,6 +25,8 @@ import console.ConsoleHandler;
 import entity.Requirement;
 import entity.TestCase;
 import entity.Variables;
+import tools.FontTool;
+
 import org.eclipse.nebula.widgets.grid.*;
 
 
@@ -47,7 +52,7 @@ public class TestCasesView extends ViewPart implements ISelectionListener{
 	private GridColumn IDColumn;
 	private GridColumn evaColumn;
 	private Font font = new Font(Display.getDefault(), "宋体", 15, SWT.NONE);
-
+	private Font headGroupFont = new Font(Display.getDefault(), "幼圆", 20, SWT.BOLD);
 	private Label requireNum;
 	@SuppressWarnings("deprecation")
 	@Override
@@ -114,14 +119,14 @@ public class TestCasesView extends ViewPart implements ISelectionListener{
 		IDColumn=new GridColumn(grid, SWT.NONE);
 		IDColumn.setText("用例标识");
 		IDColumn.setWidth(200);
-		IDColumn.setHeaderFont(font);
+		IDColumn.setHeaderFont(headGroupFont);
 		preColumnGroup=new GridColumnGroup(grid, SWT.NONE);
 		preColumnGroup.setText("先决条件");
-		GridColumn pre = new GridColumn(preColumnGroup, SWT.NONE);
-		pre.setText(" ");
-		pre.setWidth(100);
+		preColumnGroup.setHeaderFont(headGroupFont);
+		
 		inputColumnGroup=new GridColumnGroup(grid, SWT.NONE);
 		inputColumnGroup.setText("输入变量");
+		inputColumnGroup.setHeaderFont(headGroupFont);
 		
 		GridColumn in = new GridColumn(inputColumnGroup, SWT.NONE);
 		in.setText(" ");
@@ -129,13 +134,11 @@ public class TestCasesView extends ViewPart implements ISelectionListener{
 		
 		outputColumnGroup=new GridColumnGroup(grid, SWT.NONE);
 		outputColumnGroup.setText("预期结果");
-		GridColumn out = new GridColumn(outputColumnGroup, SWT.NONE);
-		out.setText(" ");
-		out.setWidth(100);
+		outputColumnGroup.setHeaderFont(headGroupFont);
 		
 		evaColumn = new GridColumn(grid, SWT.NONE);
 		evaColumn.setText("评价准则");
-		evaColumn.setHeaderFont(font);
+		evaColumn.setHeaderFont(headGroupFont);
 		evaColumn.setWidth(200);
 		grid.setVisible(false);
 	}
@@ -152,7 +155,7 @@ public class TestCasesView extends ViewPart implements ISelectionListener{
 
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if(selection!= null){
+		if(selection!= null && selection instanceof IStructuredSelection){
 			IStructuredSelection is = (IStructuredSelection)selection;
 			
 			
@@ -177,27 +180,60 @@ public class TestCasesView extends ViewPart implements ISelectionListener{
 				grid.setVisible(true);
 				ConsoleHandler.info("detetct change\n");
 				
+				int outTotalWidth = 0;
+				int inTotalWidth = 0;
+				int preTotalWidth = 0;
 				for (Variables Var : requirement.getInputVars()) {
 					GridColumn in = new GridColumn(inputColumnGroup, SWT.NONE);
 					in.setText(Var.getVariablesName());
 					in.setHeaderFont(font);
-					in.setWidth(Var.getVariablesName().length()*30);
+					in.setWidth(FontTool.getWidth(Var.getVariablesName(), font));
+					in.setAlignment(SWT.CENTER);
+					inTotalWidth+=FontTool.getWidth(Var.getVariablesName(), font);
 				}
 				
 				for (Variables Var : requirement.getPreConVars()) {
 					GridColumn in = new GridColumn(preColumnGroup, SWT.NONE);
 					in.setText(Var.getVariablesName());
 					in.setHeaderFont(font);
-					
-					in.setWidth(Var.getVariablesName().length()*30);
+					in.setWidth(FontTool.getWidth(Var.getVariablesName(), font));
+					in.setAlignment(SWT.CENTER);
+					preTotalWidth+=FontTool.getWidth(Var.getVariablesName(), font);
 				}
 				
 				for (Variables Var : requirement.getOutputVars()) {
 					GridColumn in = new GridColumn(outputColumnGroup, SWT.NONE);
 					in.setText(Var.getVariablesName());
 					in.setHeaderFont(font);
-					in.setWidth(Var.getVariablesName().length()*30);
+					in.setWidth(FontTool.getWidth(Var.getVariablesName(), font));
+					in.setAlignment(SWT.CENTER);
+					outTotalWidth+=FontTool.getWidth(Var.getVariablesName(), font);
 				}
+				//若列组中总宽度小于列组名称所占用的宽度，重新设置列宽度 
+				if(inTotalWidth != 0 && FontTool.getWidth(inputColumnGroup.getText(), headGroupFont)>inTotalWidth) {
+					GridColumn[] columns = inputColumnGroup.getColumns();
+					int dev = ((FontTool.getWidth(inputColumnGroup.getText(), headGroupFont)-inTotalWidth)/columns.length);
+					for (GridColumn gridColumn : columns) {
+						gridColumn.setWidth(gridColumn.getWidth()+dev);
+					}
+				}
+				if(outTotalWidth != 0 && FontTool.getWidth(outputColumnGroup.getText(), headGroupFont)>outTotalWidth) {
+					GridColumn[] columns = outputColumnGroup.getColumns();
+					int dev = ((FontTool.getWidth(outputColumnGroup.getText(), headGroupFont)-inTotalWidth)/columns.length);
+					for (GridColumn gridColumn : columns) {
+						gridColumn.setWidth(gridColumn.getWidth()+dev);
+					}
+				}
+				if( preTotalWidth!=0 &&FontTool.getWidth(preColumnGroup.getText(), headGroupFont)>preTotalWidth ) {
+					GridColumn[] columns = preColumnGroup.getColumns();
+					int dev = ((FontTool.getWidth(preColumnGroup.getText(), headGroupFont)-inTotalWidth)/columns.length);
+					for (GridColumn gridColumn : columns) {
+						gridColumn.setWidth(gridColumn.getWidth()+dev);
+					}
+				}
+				
+				IDColumn.setWidth(FontTool.getWidth(IDColumn.getText(), headGroupFont));
+				evaColumn.setWidth(FontTool.getWidth(evaColumn.getText(), headGroupFont));
 				
 				for(TestCase testcase:requirement.getTestcases()) {
 					int columnCount = 1;

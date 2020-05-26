@@ -64,6 +64,12 @@
             name="INFO"
             restorable="true">
       </view>
+      <view
+            class="org.eclipse.nebula.examples.ExamplesView"
+            id="Auto-TestCase-generate-tool.view3"
+            name="name"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -280,46 +286,6 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="menu:Auto-TestCase-generate-tool.MenuExplorer?after=additions">
-         <command
-               commandId="Auto-TestCase-generate-tool.jokeCommand"
-               label="jok"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false"> 
-               <with
-                    variable="selection"> 
-                  <iterate
-                       ifEmpty="true"
-                       operator="or"> 
-                   <or> 
-                       <instanceof
-                               value="Auto-TestCase-generate-tool.Person"> 
-                       </instanceof>                                             
-                   </or> 
-                 </iterate> 
-                 </with> 
-              </visibleWhen>   
-         </command>
-      </menuContribution>
-      <menuContribution
-           locationURI="toolbar:Auto-TestCase-generate-tool.navigationView?after=additions"> 
-        <command
-              commandId="Auto-TestCase-generate-tool.jokeCommand"
-              icon="icons/searchres.gif"
-              style="push"> 
-              <visibleWhen
-                    checkEnabled="false">
-                 <not>
-                    <instanceof
-                          value="java.lang.Object">
-                    </instanceof>
-                 </not>
-              </visibleWhen>  
-        </command> 
-     </menuContribution> 
-      <menuContribution
-            allPopups="false"
             locationURI="popup:Auto-TestCase-generate-tool.navigationView?after=additions">
          <command
                commandId="Auto-TestCase-generate-tool.generateTestCase"
@@ -372,7 +338,7 @@
                      variable="selection">
                   <iterate
                         ifEmpty="true"
-                        operator="or">
+                        operator="and">
                      <or>
                         <instanceof
                               value="entity.Model">

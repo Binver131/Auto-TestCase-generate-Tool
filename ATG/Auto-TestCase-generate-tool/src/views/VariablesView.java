@@ -249,7 +249,7 @@ public class VariablesView extends ViewPart implements ISelectionListener{
 
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if(selection!= null){
+		if(selection!= null && selection instanceof IStructuredSelection){
 			IStructuredSelection is = (IStructuredSelection)selection;
 			if(is.getFirstElement() instanceof Requirement) {
 				
