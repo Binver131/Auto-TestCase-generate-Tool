@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.VariableMapper">
+	<select id="findVariableByModelID" parameterType="int" resultType="Variable" >
+        select variableID variableID,variableName variableName,typeID typeID,modelID modelID
+        from variable 
+        where modelID = #{modelID}
+    </select>
+    <insert id="insertVariable" parameterType="Variable" keyProperty="variableID" useGeneratedKeys="true">
+    	insert variable(variableID,variableName,typeID,modelID) value (#{variableID},#{variableName},#{typeID},#{modelID})
+    </insert>
+    <delete id="deleteVariableByModelID" parameterType="int">
+    	delete from variable where modelID = #{modelID}
+    </delete>
+</mapper>

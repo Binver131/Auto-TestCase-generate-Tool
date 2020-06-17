@@ -27,10 +27,10 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
 import console.ConsoleHandler;
-import entity.Model;
-import entity.Requirement;
-import entity.RowRequirement;
-import entity.Variables;
+import bean.Model;
+import bean.Requirement;
+import bean.RowRequirement;
+import bean.Variable;
 
 /**
  * 
@@ -98,20 +98,20 @@ public class RowReqInfoView extends ViewPart implements ISelectionListener {
 			if (is.getFirstElement() instanceof RowRequirement) {
 				nameLabel.setText("原始需求:");
 				contentL.setText("需求内容");
-				name.setText(((RowRequirement) is.getFirstElement()).getName());
-				content.setText(((RowRequirement) is.getFirstElement()).getContent());
+				name.setText(((RowRequirement) is.getFirstElement()).getRowRequirementIdentifier());
+				content.setText(((RowRequirement) is.getFirstElement()).getRowRequirementContent());
 			}
 			if (is.getFirstElement() instanceof Model) {
 				nameLabel.setText("模型名称:");
 				contentL.setText("模型描述");
-				name.setText(((Model) is.getFirstElement()).getName());
-				content.setText(((Model) is.getFirstElement()).getText());
+				name.setText(((Model) is.getFirstElement()).getModelIdentifier());
+				content.setText(((Model) is.getFirstElement()).getModelContent());
 			}
 			if (is.getFirstElement() instanceof Requirement) {
 				nameLabel.setText("规范需求:");
 				contentL.setText("需求描述");
-				name.setText(((Requirement) is.getFirstElement()).getRequirementName());
-				content.setText(((Requirement) is.getFirstElement()).getRequirementText());
+				name.setText(((Requirement) is.getFirstElement()).getRequirementIdentifier());
+				content.setText(((Requirement) is.getFirstElement()).getRequirementContent());
 			}
 		}
 	}

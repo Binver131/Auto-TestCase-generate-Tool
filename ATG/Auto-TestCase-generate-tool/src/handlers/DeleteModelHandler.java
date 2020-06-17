@@ -11,8 +11,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 import console.ConsoleHandler;
-import entity.Model;
-import jdbc.ConnectHelper;
+import bean.Model;
+import jdbc.ConnectHelp;
 import views.NavigationView;
 
 
@@ -32,7 +32,12 @@ public class DeleteModelHandler extends AbstractHandler {
 		    Iterator<Model> it = is.iterator();
 		    while (it.hasNext()) {
 		     Model model = (Model) it.next();
-		     ConnectHelper.removeModel(model.getDbId());
+		     //ConnectHelper.removeModel(model.getDbId());
+		     ConnectHelp.deleteModel(model);
+		     ConnectHelp.deleteRowRequirement(model.getModelID());
+		     ConnectHelp.deleteRequirement(model.getModelID());
+		     ConnectHelp.deleteType(model.getModelID());
+		     ConnectHelp.deleteVariable(model.getModelID());
 		     ConsoleHandler.info("The Model "+model.toString()+" will be deleted");
 		    }
 		   }

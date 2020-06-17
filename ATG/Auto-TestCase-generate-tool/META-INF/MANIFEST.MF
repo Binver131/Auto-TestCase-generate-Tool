@@ -29,4 +29,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: Auto-TestCase-generate-tool
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: mysql-connector-java-5.1.47.jar,
- .
+ .,
+ mybatis-3.5.0.jar

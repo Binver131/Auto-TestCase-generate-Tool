@@ -19,9 +19,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
 import console.ConsoleHandler;
-import entity.Requirement;
-import entity.TestCase;
-import entity.Variables;
+import bean.Requirement;
+import bean.Testcase;
+import bean.Variable;
 import org.eclipse.nebula.widgets.grid.*;
 
 
@@ -161,57 +161,58 @@ public class TestCasesView extends ViewPart implements ISelectionListener{
 				
 				Requirement requirement = (Requirement)is.getFirstElement();
 				requireID.setText(requirement.getRequirementName());
-				requireNum.setText(requirement.getTestcases().length+"");
+				requireNum.setText(requirement.getTestcaseMap().values().size()+"");
 				
 				grid.clearItems();
-				
-				for(GridColumn colum: outputColumnGroup.getColumns()) {
+				for(GridColumn colum: preColumnGroup.getColumns()) {
 					colum.dispose();
 				}
 				for(GridColumn colum: inputColumnGroup.getColumns()) {
 					colum.dispose();
 				}
-				for(GridColumn colum: preColumnGroup.getColumns()) {
+
+				for(GridColumn colum: outputColumnGroup.getColumns()) {
 					colum.dispose();
 				}
 				grid.setVisible(true);
 				ConsoleHandler.info("detetct change\n");
-				
-				for (Variables Var : requirement.getInputVars()) {
-					GridColumn in = new GridColumn(inputColumnGroup, SWT.NONE);
-					in.setText(Var.getVariablesName());
-					in.setHeaderFont(font);
-					in.setWidth(Var.getVariablesName().length()*30);
+				if(!requirement.getRequirementCondition().equals("")) {
+					for (Variable Var : requirement.conditionVars()) {
+						GridColumn in = new GridColumn(preColumnGroup, SWT.NONE);
+						in.setText(Var.getVariableName());
+						in.setHeaderFont(font);
+						in.setWidth(Var.getVariableName().length()*30);
+					}
 				}
-				
-				for (Variables Var : requirement.getPreConVars()) {
-					GridColumn in = new GridColumn(preColumnGroup, SWT.NONE);
-					in.setText(Var.getVariablesName());
-					in.setHeaderFont(font);
-					
-					in.setWidth(Var.getVariablesName().length()*30);
+				if(!requirement.getRequirementInput().equals("")) {
+					for (Variable Var : requirement.inputVars()) {
+						GridColumn in = new GridColumn(inputColumnGroup, SWT.NONE);
+						in.setText(Var.getVariableName());
+						in.setHeaderFont(font);
+						in.setWidth(Var.getVariableName().length()*30);
+					}
 				}
-				
-				for (Variables Var : requirement.getOutputVars()) {
-					GridColumn in = new GridColumn(outputColumnGroup, SWT.NONE);
-					in.setText(Var.getVariablesName());
-					in.setHeaderFont(font);
-					in.setWidth(Var.getVariablesName().length()*30);
+				if(!requirement.getRequirementOutput().equals("")) {
+					for (Variable Var : requirement.outputVars()) {
+						GridColumn in = new GridColumn(outputColumnGroup, SWT.NONE);
+						in.setText(Var.getVariableName());
+						in.setHeaderFont(font);
+						in.setWidth(Var.getVariableName().length()*30);
+					}
 				}
-				
-				for(TestCase testcase:requirement.getTestcases()) {
+				for(Testcase testcase:requirement.getTestcaseMap().values()) {
 					int columnCount = 1;
 					GridItem item = new GridItem(grid, SWT.NONE);
 					
 					item.setText(testcase.getTestcaseID()+"");
 					item.setText(columnCount++,testcase.getTestcaseEvaluate());
 					
-					for(String var:testcase.getTestcaseInput().split(",")) {
+					for(String var:testcase.getTestcaseCondition().split(",")) {
 						
 						item.setText(columnCount++,var);
 					}
 					
-					for(String var:testcase.getTestcaseCondition().split(",")) {
+					for(String var:testcase.getTestcaseInput().split(",")) {
 						
 						item.setText(columnCount++,var);
 					}

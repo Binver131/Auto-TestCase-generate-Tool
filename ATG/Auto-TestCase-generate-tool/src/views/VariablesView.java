@@ -26,9 +26,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
 import console.ConsoleHandler;
-import entity.Requirement;
-import entity.Type;
-import entity.Variables;
+import bean.Requirement;
+import bean.Type;
+import bean.Variable;
 
 
 /**
@@ -65,9 +65,9 @@ public class VariablesView extends ViewPart implements ISelectionListener{
 
 		@Override
 		public Object getParent(Object child) {
-			if (child instanceof Variables) {
-				return ((Variables)child).getParent();
-			}
+//			if (child instanceof Variable) {
+//				return ((Variables)child).getParent();
+//			}
 			if (child instanceof String) {
 				return root;
 			}
@@ -78,11 +78,11 @@ public class VariablesView extends ViewPart implements ISelectionListener{
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof String) {
 				if(parent.equals("Pre")) {
-					root.getPreConVars();
+					root.conditionVars();
 				}else if(parent.equals("Input")) {
-					root.getInputVars();
+					root.inputVars();
 				}else if(parent.equals("Output")) {
-					root.getOutputVars();
+					root.outputVars();
 				}
 			}
 			if (parent instanceof Requirement) {
@@ -254,31 +254,33 @@ public class VariablesView extends ViewPart implements ISelectionListener{
 			if(is.getFirstElement() instanceof Requirement) {
 				
 				root = (Requirement)is.getFirstElement();
-				ConsoleHandler.info(root.getRequirementId());
+				ConsoleHandler.info(root.getRequirementIdentifier());
 				requireID.setText(root.getRequirementName());
 				
 				input.removeAll();
 				preCon.removeAll();
 				output.removeAll();
-				
-				for (Variables Var : root.getInputVars()) {
-					TreeItem in = new TreeItem(input, SWT.NONE);
-					Type type = root.getParent().getParent().getType(Var.getVariablesTypeID()+"");
-					in.setText(new String[] {Var.getVariablesName(),type.getTypename(),type.getSizeString(),type.getTyperange()});
+				if(!root.getRequirementInput().equals("")) {
+					for (Variable Var : root.inputVars()) {
+						TreeItem in = new TreeItem(input, SWT.NONE);
+						//Type type = root.getParent().getParent().getType(Var.getVariablesTypeID()+"");
+						in.setText(new String[] {Var.getVariableName(),Var.getVariableType().getTypeName(),Var.getVariableType().getTypeSize()+"",Var.getVariableType().getTypeRange()});
+					}
 				}
-				
-				for (Variables Var : root.getOutputVars()) {
-					TreeItem in = new TreeItem(output, SWT.NONE);
-					Type type = root.getParent().getParent().getType(Var.getVariablesTypeID()+"");
-					in.setText(new String[] {Var.getVariablesName(),type.getTypename(),type.getSizeString(),type.getTyperange()});
+				if(!root.getRequirementOutput().equals("")) {
+					for (Variable Var : root.outputVars()) {
+						TreeItem in = new TreeItem(output, SWT.NONE);
+						//Type type = root.getParent().getParent().getType(Var.getVariablesTypeID()+"");
+						in.setText(new String[] {Var.getVariableName(),Var.getVariableType().getTypeName(),Var.getVariableType().getTypeSize()+"",Var.getVariableType().getTypeRange()});
+					}
 				}
-				
-				for (Variables Var : root.getPreConVars()) {
-					TreeItem in = new TreeItem(preCon, SWT.NONE);
-					Type type = root.getParent().getParent().getType(Var.getVariablesTypeID()+"");
-					in.setText(new String[] {Var.getVariablesName(),type.getTypename(),type.getSizeString(),type.getTyperange()});
+				if(!root.getRequirementCondition().equals("")) {
+					for (Variable Var : root.conditionVars()) {
+						TreeItem in = new TreeItem(preCon, SWT.NONE);
+						//Type type = root.getParent().getParent().getType(Var.getVariablesTypeID()+"");
+						in.setText(new String[] {Var.getVariableName(),Var.getVariableType().getTypeName(),Var.getVariableType().getTypeSize()+"",Var.getVariableType().getTypeRange()});
+					}
 				}
-				
 			}
 		}
 	}
