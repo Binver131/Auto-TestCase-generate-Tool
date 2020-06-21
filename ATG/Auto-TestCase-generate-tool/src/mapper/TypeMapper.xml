@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.TypeMapper">
+	<select id="findTypeByModelID" parameterType="int" resultType="Type" >
+        select typeID typeID,typeName typeName,typeRange typeRange,modelID modelID,typeSize typeSize,typeRowName typeRowName 
+        from type 
+        where modelID = #{modelID}
+    </select>
+    <insert id="insertType" parameterType="Type" keyProperty="typeID" useGeneratedKeys="true">
+    	insert type(typeID,typeName,typeRange,modelID,typeSize,typeRowName) value (#{typeID},#{typeName},#{typeRange},#{modelID},#{typeSize},#{typeRowName})
+    </insert>
+    <delete id="deleteTypeByModelID" parameterType="int">
+    	delete from type where modelID = #{modelID}
+    </delete>
+</mapper>

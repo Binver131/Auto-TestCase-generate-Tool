@@ -352,7 +352,7 @@
                         operator="or">
                      <or>
                         <instanceof
-                              value="entity.Requirement">
+                              value="bean.Requirement">
                         </instanceof>
                      </or>
                   </iterate>
@@ -381,7 +381,7 @@
                         operator="or">
                      <or>
                         <instanceof
-                              value="entity.Model">
+                              value="bean.Model">
                         </instanceof>
                      </or>
                   </iterate>

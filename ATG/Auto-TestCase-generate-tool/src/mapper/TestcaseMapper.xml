@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.TestcaseMapper">
+	<select id="findTestcaseByRequirementID" parameterType="int" resultType="Testcase" >
+        select testcaseID testcaseID,requirementID requirementID,testcaseCondition testcaseCondition,testcaseInput testcaseInput,testcaseOutput testcaseOutput,testcaseType testcaseType,testcaseEvaluate testcaseEvaluate
+        from testcase 
+        where requirementID = #{requirementID}
+    </select>
+   	<insert id="insertTestcase" parameterType="Testcase" keyProperty="testcaseID" useGeneratedKeys="true">
+    	insert testcase(testcaseID,requirementID,testcaseCondition,testcaseInput,testcaseOutput,testcaseType,testcaseEvaluate) value (#{testcaseID},#{requirementID},#{testcaseCondition},#{testcaseInput},#{testcaseOutput},#{testcaseType},#{testcaseEvaluate})
+    </insert>
+</mapper>

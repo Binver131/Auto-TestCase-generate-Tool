@@ -6,7 +6,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
-import autotestcasegeneratetool.splashHandlers.InteractiveSplashHandler;
+import views.DataBaseDisplay;
+
 
 /**
  * This class controls all aspects of the application's execution
@@ -15,7 +16,8 @@ public class Application implements IApplication {
 
 	@Override
 	public Object start(IApplicationContext context) {
-		Display display = PlatformUI.createDisplay();
+		//DataBaseDisplay.chooseDatabase();
+	    Display display = PlatformUI.createDisplay();
 		try {
 			int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
 			if (returnCode == PlatformUI.RETURN_RESTART) {

@@ -28,11 +28,11 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.SharedImages;
 import org.eclipse.ui.part.ViewPart;
-import entity.DataBase;
-import entity.Model;
-import entity.Requirement;
-import entity.RowRequirement;
-import jdbc.ConnectHelper;
+import bean.DataBase;
+import bean.Model;
+import bean.Requirement;
+import bean.RowRequirement;
+import jdbc.ConnectHelp;
 
 /**
  * 
@@ -80,13 +80,13 @@ public class NavigationView extends ViewPart {
 		@Override
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof DataBase) {
-				return ((DataBase)parent).getChildren();
+				return ((DataBase)parent).getModels();
 			}
 			if (parent instanceof Model) {
-				return ((Model)parent).getChildren();
+				return ((Model)parent).getRowRequirement();
 			}
 			if (parent instanceof RowRequirement) {
-				return ((RowRequirement)parent).getChildren();
+				return ((RowRequirement)parent).getRequirement();
 			}
 			return new Object[0];
 		}
@@ -131,7 +131,7 @@ public class NavigationView extends ViewPart {
 	* @throws
 	 */
 	private DataBase initDataBase() {
-		DataBase root = ConnectHelper.getDataBaseInstance();		
+		DataBase root = ConnectHelp.getDataBaseInstance();		
 		return root;
 	}
 
@@ -144,7 +144,6 @@ public class NavigationView extends ViewPart {
 	    parent.setMenu(menu);
 	    getSite().registerContextMenu(menuManager, null);
 	    
-	   
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
@@ -168,10 +167,6 @@ public class NavigationView extends ViewPart {
 				}
 			}
 		});
-		
-		
-		
-		
 		getSite().setSelectionProvider(viewer);
 			
 	}

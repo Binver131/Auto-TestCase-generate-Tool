@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.RowRequirementMapper">
+	<select id="findRowRequirementByModelID" parameterType="int" resultType="RowRequirement" >
+        select rowRequirementID rowRequirementID,rowRequirementIdentifier rowRequirementIdentifier,rowRequirementName rowRequirementName,rowRequirementContent rowRequirementContent,modelID modelID
+        from rowrequirement 
+        where modelID = #{modelID}
+    </select>
+    <insert id="insertRowRequirement" parameterType="RowRequirement" keyProperty="rowRequirementID" useGeneratedKeys="true">
+    	insert rowrequirement(rowRequirementID,rowRequirementIdentifier,rowRequirementName,rowRequirementContent,modelID) value (#{rowRequirementID},#{rowRequirementIdentifier},#{rowRequirementName},#{rowRequirementContent},#{modelID})
+    </insert>
+    <delete id="deleteRowRequirementByModelID" parameterType="int">
+    	delete from rowrequirement where modelID = #{modelID}
+    </delete>
+</mapper>

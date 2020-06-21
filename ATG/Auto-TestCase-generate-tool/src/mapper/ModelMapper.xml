@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.ModelMapper">
+	<select id="findModelAll" resultType="Model" >
+        select modelID modelID,modelIdentifier modelIdentifier,modelName modelName,modelContent modelContent,modelClass modelClass
+        from model 
+    </select>
+    <insert id="insertModel" parameterType="Model" keyProperty="modelID" useGeneratedKeys="true">
+    	insert model(modelID,modelIdentifier,modelName,modelContent,modelClass) value (#{modelID},#{modelIdentifier},#{modelName},#{modelContent},#{modelClass})
+    </insert>
+    <delete id="deleteModelByModelID" parameterType="int">
+    	delete from model where modelID = #{modelID}
+    </delete>
+</mapper>
