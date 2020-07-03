@@ -10,6 +10,7 @@ import java.io.RandomAccessFile;
 import java.util.Properties;
 
 public class PropertiesChange {
+	public static Properties  pro = new Properties();
 	public static void readProperties() throws IOException {
 		InputStream insss =PropertiesChange.class.getResourceAsStream("/mybatis/jdbc.properties");
 		Properties pss = new Properties();
@@ -45,10 +46,10 @@ public class PropertiesChange {
  
 	}
 	public static void changeProperties(String url,String userName,String passwd) throws IOException {
-		Properties pro = new Properties();
+		
 		InputStream in = null;
 		try{
-	        //in = new BufferedInputStream(new FileInputStream("src/mybatis/jdbc.properties"));
+	        //in = new BufferedInputStream(new FileInputStream("G:\\gitproject\\Auto-TestCase-generate-Tool\\ATG\\Auto-TestCase-generate-tool\\src\\mybatis\\jdbc.properties"));
 			in =PropertiesChange.class.getResourceAsStream("/mybatis/jdbc.properties");
 			pro.load(in);
 	        FileOutputStream file = new FileOutputStream("G:\\gitproject\\Auto-TestCase-generate-Tool\\ATG\\Auto-TestCase-generate-tool\\src\\mybatis\\jdbc.properties");
@@ -59,6 +60,7 @@ public class PropertiesChange {
 	        pro.put("jdbc.driver","com.mysql.jdbc.Driver");
 	        //pro.setProperty("jdbc.url","jdbc:mysql://"+url+"?useUnicode=true&characterEncoding=UTF-8&useSSL=false");
 	        pro.store(file,"这次更新的备注");
+	        file.close();
 	    }catch(Exception e){
 	        e.printStackTrace();
 	    }finally{

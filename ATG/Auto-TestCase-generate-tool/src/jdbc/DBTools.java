@@ -8,7 +8,10 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import views.DataBaseDisplay;
 
 import java.awt.Robot;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.Reader;
+import java.util.Properties;
 
 public class DBTools {
     public static SqlSessionFactory sessionFactory;
@@ -16,6 +19,7 @@ public class DBTools {
     static{
         try {
             //使用MyBatis提供的Resources类加载mybatis的配置文件
+        	//InputStream fis2 = DBTools.class.getResourceAsStream("\\mybatis\\mybatis.cfg.xml");
             Reader reader = Resources.getResourceAsReader("\\mybatis\\mybatis.cfg.xml");
             //构建sqlSession的工厂
             sessionFactory = new SqlSessionFactoryBuilder().build(reader);

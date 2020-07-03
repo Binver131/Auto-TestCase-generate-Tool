@@ -30,4 +30,8 @@ Automatic-Module-Name: Auto-TestCase-generate-tool
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: mysql-connector-java-5.1.47.jar,
  .,
- mybatis-3.5.0.jar
+ mybatis-3.5.0.jar,
+ commons-math3-3.6.1.jar,
+ poi-4.1.2.jar,
+ poi-ooxml-4.1.2.jar,
+ poi-ooxml-schemas-4.1.2.jar

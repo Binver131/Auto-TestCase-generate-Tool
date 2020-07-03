@@ -382,6 +382,27 @@
                </with>
             </visibleWhen>
          </command>
+         <command
+               commandId="Auto-TestCase-generate-tool.exportCommand"
+               icon="platform:/plugin/org.eclipse.ui.ide/icons/full/etool16/export_wiz.png"
+               label="导出为xls"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="true"
+                        operator="or">
+                     <or>
+                        <instanceof
+                              value="bean.Model">
+                        </instanceof>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -423,6 +444,10 @@
       <handler
             class="handlers.DeleteModelHandler"
             commandId="Auto-TestCase-generate-tool.DeleteModelCommand">
+      </handler>
+      <handler
+            class="handlers.ExportModelHandler"
+            commandId="Auto-TestCase-generate-tool.exportCommand">
       </handler>
    </extension>
    <extension

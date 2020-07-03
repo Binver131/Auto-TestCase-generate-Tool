@@ -36,7 +36,7 @@ public class importHandler extends AbstractHandler{
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		// TODO Auto-generated method stub
 		
-		FileDialog fd=new FileDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),SWT.OPEN);
+		  FileDialog fd=new FileDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),SWT.OPEN);
 		  fd.setFilterPath(System.getProperty("JAVA.HOME"));
 		  fd.setFilterExtensions(new String[]{"*.xml","*.*"});
 		  fd.setFilterNames(new String[]{"XML Files(*.XML)","All Files(*.*)"});
