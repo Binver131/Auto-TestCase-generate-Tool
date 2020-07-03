@@ -44,12 +44,14 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.part.ViewPart;
 
+import bean.DataBase;
+import bean.Model;
+import bean.Requirement;
+import bean.Testcase;
+import bean.Variable;
 import console.ConsoleHandler;
-import entity.DataBase;
-import entity.Requirement;
-import entity.TestCase;
-import entity.Variables;
-import jdbc.ConnectHelper;
+import jdbc.ConnectHelp;
+
 
 /**  
 * @ClassName: ManualDesignView  
@@ -69,18 +71,22 @@ public class ManualDesignView extends ViewPart {
 	private GridColumn evaColumn;
 	private Font font = new Font(Display.getDefault(), "宋体", 15, SWT.NONE);
 	private Requirement requirement;
+	private Model model;
+	private HashMap<String, Variable> variableHashMap;
 	private Label requireNum;
 	private GridEditor gridEditor;
 	private ArrayList<GridEditor> editors=new ArrayList<GridEditor>();
 	private ArrayList<Control> controls=new ArrayList<Control>(); 
 	private int i;
 	private DataBase initDataBase() {
-		DataBase root = ConnectHelper.getDataBaseInstance();		
+		DataBase root = ConnectHelp.getDataBaseInstance();		
 		return root;
 	}
 
 	private HashMap<Integer,String> rowtestcase=new HashMap<Integer, String>(); 
-
+	private HashMap<Variable,String>testcaseConditionMap; //<变量名称，变量取值>
+	private HashMap<Variable,String>testcaseInputMap;
+	private HashMap<Variable,String>testcaseOutputMap;
 	@Override
 	public void createPartControl(Composite parent) {
 		// TODO Auto-generated method stub
@@ -185,17 +191,21 @@ public class ManualDesignView extends ViewPart {
 			@Override
 			public void handleEvent(Event event) {
 				// TODO Auto-generated method stub
+				
 				if(grid.getItemCount()==0) {
 					GridItem item =new GridItem(grid,SWT.NONE);	
 					for(i=0;i<grid.getColumnCount();i++) {
 						gridEditor = new GridEditor(grid);
 						gridEditor.grabHorizontal = true;
 						String strss="emmu,boolean,Enumerated";
-						if(VariablesView.varHashMap.get(grid.getColumn(i).getText())!=null) {
-							if(strss.contains(VariablesView.varHashMap.get(grid.getColumn(i).getText()).getTypeownname())){
-								String rowrange= VariablesView.varHashMap.get(grid.getColumn(i).getText()).getRange();
-								rowrange=remove(rowrange, "[", 1);
-								rowrange=remove(rowrange, "]", 1);
+
+						
+						if(model.getVariableMap().get(grid.getColumn(i).getText())!=null) {
+							
+							if(strss.contains(model.getVariableMap().get(grid.getColumn(i).getText()).getVariableType().getTypeRowName())){
+								String rowrange= model.getVariableMap().get(grid.getColumn(i).getText()).getVariableType().getTypeRange();
+//								rowrange=remove(rowrange, "[", 1);
+//								rowrange=remove(rowrange, "]", 1);
 								String[] range =rowrange.split(",");
 								Combo combo=new Combo(grid,SWT.BORDER|SWT.READ_ONLY);
 								for(int i=0;i<range.length;i++) {
@@ -232,6 +242,25 @@ public class ManualDesignView extends ViewPart {
 								});
 							}
 							
+						}
+						else if(grid.getColumn(i).getText().equals("评价准则")){
+							Combo combo=new Combo(grid,SWT.BORDER|SWT.READ_ONLY);
+							combo.add("equal");
+							combo.add("more than");
+							combo.add("less than");
+							gridEditor.setEditor(combo, item, i);
+							
+							controls.add(combo);
+							combo.addListener(SWT.FocusOut, new Listener() {
+							
+								@Override
+								public void handleEvent(Event event) {
+									// TODO Auto-generated method stub
+									if(combo.getText()!="") {
+									rowtestcase.put(controls.indexOf(combo),combo.getText());
+									}
+								}
+							});
 						}
 						else {
 							Text text=new Text(grid, SWT.BORDER);
@@ -274,28 +303,114 @@ public class ManualDesignView extends ViewPart {
 				// TODO Auto-generated method stub
 				System.out.println(rowtestcase.size());
 				if(rowtestcase.size()==grid.getColumnCount()) {
-				TestCase testCase=new TestCase();
+				boolean flag=false;
+				Testcase testCase=new Testcase();
 				String testcaseCondition="";	
 				String testcaseInput="";			
 				String testcaseOutput="";		
+				String intString="int,short,long,byte";
+				String floatString="float,double";
+				
+				
+				//condition、input、output、
 				for(i=0;i<grid.getColumnCount();i++) {
-					if(grid.getColumn(i).getColumnGroup()==inputColumnGroup) {
-						testcaseInput=testcaseInput+","+rowtestcase.get(i);
-					}
-					else if(grid.getColumn(i).getColumnGroup()==outputColumnGroup) {
-						testcaseOutput=testcaseOutput+","+rowtestcase.get(i);
-					}
-					else if(grid.getColumn(i).getColumnGroup()==preColumnGroup) {
-						testcaseCondition=testcaseCondition+","+rowtestcase.get(i);
-					}
-					else if(grid.getColumn(i).getText()=="用例标识") {
-						testCase.setTestcaseID(Integer.parseInt(rowtestcase.get(i)));
-					}
-					else if(grid.getColumn(i).getText()=="评价准则") {
-						testCase.setTestcaseEvaluate(rowtestcase.get(i));
-					}
+					
+					if(model.getVariableMap().get(grid.getColumn(i).getText())!=null) {
+						if(intString.contains(model.getVariableMap().get(grid.getColumn(i).getText()).getVariableType().getTypeRowName())) {
+							
+							String rowrange = model.getVariableMap().get(grid.getColumn(i).getText()).getVariableType().getTypeRange();
+							String[] rangestring=rowrange.split(","); 
+							int[] range= {Integer.valueOf(rangestring[0]),Integer.valueOf(rangestring[1])};
+							if(!isintNumber(rowtestcase.get(i))) {
+								ConsoleHandler.info(grid.getColumn(i).getText()+"类型错误");
+								
+								flag=false;
+								break;
+							}
+							else if(Integer.valueOf(rowtestcase.get(i))<=range[0]||Integer.valueOf(rowtestcase.get(i))>=range[1]){
+								ConsoleHandler.info(grid.getColumn(i).getText()+"超出范围");
+								System.out.println(range[0]+" "+range[1]);
+								ConsoleHandler.info(rangestring[0]);
+								ConsoleHandler.info(rangestring[1]);
+								flag=false;
+								break;
+							}else {
+								if(grid.getColumn(i).getColumnGroup()==inputColumnGroup) {
+									testcaseInput=testcaseInput+","+rowtestcase.get(i);
+								}
+								else if(grid.getColumn(i).getColumnGroup()==outputColumnGroup) {
+									testcaseOutput=testcaseOutput+","+rowtestcase.get(i);
+								}
+								else if(grid.getColumn(i).getColumnGroup()==preColumnGroup) {
+									testcaseCondition=testcaseCondition+","+rowtestcase.get(i);
+								}
+								else if(grid.getColumn(i).getText()=="用例标识") {
+									testCase.setTestcaseID(Integer.parseInt(rowtestcase.get(i)));
+								}
+								else if(grid.getColumn(i).getText()=="评价准则") {
+									testCase.setTestcaseEvaluate(rowtestcase.get(i));
+								}
+								flag=true;
+							}
+						}
+						else if(floatString.contains(model.getVariableMap().get(grid.getColumn(i).getText()).getVariableType().getTypeRowName())) {
+							String rowrange = model.getVariableMap().get(grid.getColumn(i).getText()).getVariableType().getTypeRange();
+							String[] rangestring=rowrange.split(","); 
+							double[] range= {Double.parseDouble(rangestring[0]),Double.parseDouble(rangestring[1])};
+							if(!isfloatNumber(rowtestcase.get(i))) {
+								ConsoleHandler.info(grid.getColumn(i).getText()+"类型错误");
+								flag=false;
+								break;
+							}
+							else if(Double.parseDouble(rowtestcase.get(i))<=range[0]||Double.parseDouble(rowtestcase.get(i))>=range[1]){
+								ConsoleHandler.info(grid.getColumn(i).getText()+"超出范围");
+								flag=false;
+								break;
+							}else {
+								if(grid.getColumn(i).getColumnGroup()==inputColumnGroup) {
+									testcaseInput=testcaseInput+","+rowtestcase.get(i);
+								}
+								else if(grid.getColumn(i).getColumnGroup()==outputColumnGroup) {
+									testcaseOutput=testcaseOutput+","+rowtestcase.get(i);
+								}
+								else if(grid.getColumn(i).getColumnGroup()==preColumnGroup) {
+									testcaseCondition=testcaseCondition+","+rowtestcase.get(i);
+								}
+								else if(grid.getColumn(i).getText()=="用例标识") {
+									testCase.setTestcaseID(Integer.parseInt(rowtestcase.get(i)));
+								}
+								else if(grid.getColumn(i).getText()=="评价准则") {
+									testCase.setTestcaseEvaluate(rowtestcase.get(i));
+								}
+								flag=true;
+							}
+						}
+						else {
+							if(grid.getColumn(i).getColumnGroup()==inputColumnGroup) {
+								testcaseInput=testcaseInput+","+rowtestcase.get(i);
+							}
+							else if(grid.getColumn(i).getColumnGroup()==outputColumnGroup) {
+								testcaseOutput=testcaseOutput+","+rowtestcase.get(i);
+							}
+							else if(grid.getColumn(i).getColumnGroup()==preColumnGroup) {
+								testcaseCondition=testcaseCondition+","+rowtestcase.get(i);
+							}
+							else if(grid.getColumn(i).getText()=="用例标识") {
+								testCase.setTestcaseID(Integer.parseInt(rowtestcase.get(i)));
+							}
+							else if(grid.getColumn(i).getText()=="评价准则") {
+								testCase.setTestcaseEvaluate(rowtestcase.get(i));
+							}
+							flag=true;
+						}
 
-				}
+					}
+					}
+					
+				
+				
+				
+				//去掉第一个逗号
 				if(testcaseCondition!="") {
 				testcaseCondition=remove(testcaseCondition, ",", 1);
 				}
@@ -305,23 +420,41 @@ public class ManualDesignView extends ViewPart {
 				if(testcaseOutput!="") {
 			    testcaseOutput=remove(testcaseOutput, ",", 1);
 				}
-				testCase.setTestcaseInput(testcaseInput);
-				testCase.setTestcaseOutput(testcaseOutput);
-				testCase.setTestcaseCondition(testcaseCondition);
-				testCase.setTestcaseType("manual");
-				testCase.setTestcaseRequirementID(requirement.getDbId());
-				ConnectHelper.insertTestCase(testCase, requirement.getParent().getParent().getID());
-				ConsoleHandler.info(testCase.toString());
-				for(Control con:controls) {
-					con.dispose();
+				
+				
+				//没有问题就执行插入操作
+				if(flag==true) {
+					testCase.setTestcaseInput(testcaseInput);
+					testCase.setTestcaseOutput(testcaseOutput);
+					testCase.setTestcaseCondition(testcaseCondition);
+					testCase.setTestcaseType("manmade");
+					testCase.setRequirementID(requirement.getRequirementID());
+
+			
+					
+					//插入数据库
+					try {
+						ConnectHelp.insertTestcase(testCase);
+						ConsoleHandler.info("插入数据库成功");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					//requirement.addTestcaseMap(testCase);
+					for(Control con:controls) {
+						con.dispose();
+					}
+					controls.removeAll(controls);
+					for (GridEditor edit:editors) {
+						edit.dispose();
+					}
+					editors.removeAll(editors);
+					grid.disposeAllItems();
+					rowtestcase.clear();
 				}
-				controls.removeAll(controls);
-				for (GridEditor edit:editors) {
-					edit.dispose();
+				else {
+					ConsoleHandler.info("输入不合法");
 				}
-				editors.removeAll(editors);
-				grid.disposeAllItems();
-				rowtestcase.clear();
 			}
 				else {
 					ConsoleHandler.info("还有未填写的项");
@@ -339,6 +472,10 @@ public class ManualDesignView extends ViewPart {
 	
 	public void init(Requirement requirement) {
 		this.requirement = requirement;
+		model=requirement.getParent().getParent();
+		
+		
+		
 		//开始显示
 		requireID.setText(this.requirement.getRequirementName());
 		
@@ -355,26 +492,29 @@ public class ManualDesignView extends ViewPart {
 		}
 	
 		
-		for (Variables Var : requirement.getInputVars()) {
-			GridColumn in = new GridColumn(inputColumnGroup, SWT.NONE);
-			in.setText(Var.getVariablesName());
-			in.setHeaderFont(font);
-			in.setWidth(Var.getVariablesName().length()*30);
+		if(!requirement.getRequirementCondition().equals("")) {
+			for (Variable Var : requirement.conditionVars()) {
+				GridColumn in = new GridColumn(preColumnGroup, SWT.NONE);
+				in.setText(Var.getVariableName());
+				in.setHeaderFont(font);
+				in.setWidth(Var.getVariableName().length()*30);
+			}
 		}
-		
-		for (Variables Var : requirement.getPreConVars()) {
-			GridColumn in = new GridColumn(preColumnGroup, SWT.NONE);
-			in.setText(Var.getVariablesName());
-			in.setHeaderFont(font);
-			
-			in.setWidth(Var.getVariablesName().length()*30);
+		if(!requirement.getRequirementInput().equals("")) {
+			for (Variable Var : requirement.inputVars()) {
+				GridColumn in = new GridColumn(inputColumnGroup, SWT.NONE);
+				in.setText(Var.getVariableName());
+				in.setHeaderFont(font);
+				in.setWidth(Var.getVariableName().length()*30);
+			}
 		}
-		
-		for (Variables Var : requirement.getOutputVars()) {
-			GridColumn in = new GridColumn(outputColumnGroup, SWT.NONE);
-			in.setText(Var.getVariablesName());
-			in.setHeaderFont(font);
-			in.setWidth(Var.getVariablesName().length()*30);
+		if(!requirement.getRequirementOutput().equals("")) {
+			for (Variable Var : requirement.outputVars()) {
+				GridColumn in = new GridColumn(outputColumnGroup, SWT.NONE);
+				in.setText(Var.getVariableName());
+				in.setHeaderFont(font);
+				in.setWidth(Var.getVariableName().length()*30);
+			}
 		}
 		
 		
@@ -392,6 +532,14 @@ public class ManualDesignView extends ViewPart {
 
 	public void setRequirement(Requirement requirement) {
 		this.requirement = requirement;
+	}
+	public static boolean isfloatNumber(String str){
+		String reg = "^[0-9]+(.[0-9]+)?$";
+		return str.matches(reg);
+	}
+	public static boolean isintNumber(String str){
+		String reg = "[0-9]*";
+		return str.matches(reg);
 	}
 	public String remove(String s,String string,int i){
 

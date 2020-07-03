@@ -33,7 +33,7 @@ public class ConnectHelp {
 	private static void initDataBase() {
 		// TODO Auto-generated method stub
 		database = new DataBase();
-		DataBaseDisplay.chooseDatabase();
+		//DataBaseDisplay.chooseDatabase();
 		SqlSession sqlSession=DBTools.getSession();
 		ModelMapper modelMapper = sqlSession.getMapper(ModelMapper.class);
 		TypeMapper typeMapper = sqlSession.getMapper(TypeMapper.class);

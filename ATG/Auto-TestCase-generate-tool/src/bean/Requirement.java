@@ -22,6 +22,14 @@ public class Requirement {
 	private int rowRequirementID;
 	private RowRequirement rowRequirement;
 	
+	public RowRequirement getRowRequirement() {
+		return rowRequirement;
+	}
+
+	public void setRowRequirement(RowRequirement rowRequirement) {
+		this.rowRequirement = rowRequirement;
+	}
+
 	public Requirement() {
 		testcaseMap = new LinkedHashMap<>();
 	}

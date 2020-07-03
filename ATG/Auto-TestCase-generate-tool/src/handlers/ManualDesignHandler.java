@@ -2,9 +2,9 @@
 /**  
 * @Title: ManualDesignHandler.java  
 * @Package handlers  
-* @Description: TODO(用一句话描述该文件做什么)  
+* @Description: TODO(鐢ㄤ竴鍙ヨ瘽鎻忚堪璇ユ枃浠跺仛浠�涔�)  
 * @author Binver131  
-* @date 2020年5月14日  
+* @date 2020骞�5鏈�14鏃�  
 * @version V1.0  
 */
 package handlers;
@@ -21,16 +21,17 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.ViewPart;
 
+import bean.Requirement;
 import console.ConsoleHandler;
-import entity.Requirement;
+
 import views.ManualDesignView;
 import views.TestCasesView;
 
 /**
  * @ClassName: ManualDesignHandler
- * @Description: TODO(这里用一句话描述这个类的作用)
+ * @Description: TODO(杩欓噷鐢ㄤ竴鍙ヨ瘽鎻忚堪杩欎釜绫荤殑浣滅敤)
  * @author Binver131
- * @date 2020年5月14日
+ * @date 2020骞�5鏈�14鏃�
  */
 public class ManualDesignHandler extends AbstractHandler {
 
@@ -41,10 +42,10 @@ public class ManualDesignHandler extends AbstractHandler {
 		IStructuredSelection is = (IStructuredSelection) selection;
 		if (is.getFirstElement() instanceof Requirement) {
 			requirement = (Requirement) is.getFirstElement();
-			ConsoleHandler.info(requirement.getRequirementName() + "新建测试用例");
-			System.out.println(requirement.getRequirementName() + "新建测试用例");
+			ConsoleHandler.info(requirement.getRequirementName() + "鏂板缓娴嬭瘯鐢ㄤ緥");
+			System.out.println(requirement.getRequirementName() + "鏂板缓娴嬭瘯鐢ㄤ緥");
 		}
-		// 显示界面
+		// 鏄剧ず鐣岄潰
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		IWorkbenchPage page = window.getActivePage();
 		page.hideView(page.findView(TestCasesView.ID));
@@ -54,10 +55,10 @@ public class ManualDesignHandler extends AbstractHandler {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		ConsoleHandler.info("显示编辑视图");
-		// 获取对象
+		ConsoleHandler.info("鏄剧ず缂栬緫瑙嗗浘");
+		// 鑾峰彇瀵硅薄
 
-		// 传参
+		// 浼犲弬
 		((ManualDesignView) page.findView(ManualDesignView.ID)).init(requirement);
 
 		return null;
