@@ -9,6 +9,7 @@
 package views;
 
 import java.awt.Point;
+import java.awt.Window;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -21,11 +22,14 @@ import org.eclipse.nebula.widgets.grid.GridColumnGroup;
 import org.eclipse.nebula.widgets.grid.GridEditor;
 import org.eclipse.nebula.widgets.grid.GridItem;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.WindowEvent;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.internal.win32.WINDOWPLACEMENT;
+import org.eclipse.swt.internal.win32.WINDOWPOS;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -38,10 +42,13 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.application.WorkbenchWindowAdvisor;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.part.ViewPart;
 
 import bean.DataBase;
@@ -207,7 +214,8 @@ public class ManualDesignView extends ViewPart {
 //								rowrange=remove(rowrange, "[", 1);
 //								rowrange=remove(rowrange, "]", 1);
 								String[] range =rowrange.split(",");
-								Combo combo=new Combo(grid,SWT.BORDER|SWT.READ_ONLY);
+								Combo combo=new Combo(grid,SWT.READ_ONLY);
+								
 								for(int i=0;i<range.length;i++) {
 									combo.add(range[i]);
 								}
@@ -244,7 +252,7 @@ public class ManualDesignView extends ViewPart {
 							
 						}
 						else if(grid.getColumn(i).getText().equals("评价准则")){
-							Combo combo=new Combo(grid,SWT.BORDER|SWT.READ_ONLY);
+							Combo combo=new Combo(grid,SWT.READ_ONLY);
 							combo.add("equal");
 							combo.add("more than");
 							combo.add("less than");
@@ -263,7 +271,7 @@ public class ManualDesignView extends ViewPart {
 							});
 						}
 						else {
-							Text text=new Text(grid, SWT.BORDER);
+							Text text=new Text(grid, SWT.NONE);
 							gridEditor.setEditor(text, item, i);
 							controls.add(text);
 							text.addListener(SWT.FocusOut, new Listener() {
@@ -322,17 +330,29 @@ public class ManualDesignView extends ViewPart {
 							String[] rangestring=rowrange.split(","); 
 							int[] range= {Integer.valueOf(rangestring[0]),Integer.valueOf(rangestring[1])};
 							if(!isintNumber(rowtestcase.get(i))) {
-								ConsoleHandler.info(grid.getColumn(i).getText()+"类型错误");
+								ConsoleHandler.error(grid.getColumn(i).getText()+"类型错误");
 								
 								flag=false;
+								Display display = Display.getDefault();
+								Shell shell = new Shell(display, SWT.CLOSE | SWT.TITLE | SWT.ON_TOP);
+								MessageBox mb = new MessageBox(shell, SWT.ICON_WARNING | SWT.OK);
+							     mb.setText("警告");
+							     mb.setMessage(grid.getColumn(i).getText()+"类型错误");
+							     mb.open();
 								break;
 							}
 							else if(Integer.valueOf(rowtestcase.get(i))<=range[0]||Integer.valueOf(rowtestcase.get(i))>=range[1]){
-								ConsoleHandler.info(grid.getColumn(i).getText()+"超出范围");
+								ConsoleHandler.error(grid.getColumn(i).getText()+"超出范围");
 								System.out.println(range[0]+" "+range[1]);
-								ConsoleHandler.info(rangestring[0]);
-								ConsoleHandler.info(rangestring[1]);
+								ConsoleHandler.error(rangestring[0]);
+								ConsoleHandler.error(rangestring[1]);
 								flag=false;
+								Display display = Display.getDefault();
+								Shell shell = new Shell(display, SWT.CLOSE | SWT.TITLE | SWT.ON_TOP);
+								MessageBox mb = new MessageBox(shell, SWT.ICON_WARNING | SWT.OK);
+							     mb.setText("警告");
+							     mb.setMessage(grid.getColumn(i).getText()+"超出范围");
+							     mb.open();
 								break;
 							}else {
 								if(grid.getColumn(i).getColumnGroup()==inputColumnGroup) {
@@ -358,13 +378,25 @@ public class ManualDesignView extends ViewPart {
 							String[] rangestring=rowrange.split(","); 
 							double[] range= {Double.parseDouble(rangestring[0]),Double.parseDouble(rangestring[1])};
 							if(!isfloatNumber(rowtestcase.get(i))) {
-								ConsoleHandler.info(grid.getColumn(i).getText()+"类型错误");
+								ConsoleHandler.error(grid.getColumn(i).getText()+"类型错误");
 								flag=false;
+								Display display = Display.getDefault();
+								Shell shell = new Shell(display, SWT.CLOSE | SWT.TITLE | SWT.ON_TOP);
+								MessageBox mb = new MessageBox(shell, SWT.ICON_WARNING | SWT.OK);
+							     mb.setText("警告");
+							     mb.setMessage(grid.getColumn(i).getText()+"类型错误");
+							     mb.open();
 								break;
 							}
 							else if(Double.parseDouble(rowtestcase.get(i))<=range[0]||Double.parseDouble(rowtestcase.get(i))>=range[1]){
-								ConsoleHandler.info(grid.getColumn(i).getText()+"超出范围");
+								ConsoleHandler.error(grid.getColumn(i).getText()+"超出范围");
 								flag=false;
+								Display display = Display.getDefault();
+								Shell shell = new Shell(display, SWT.CLOSE | SWT.TITLE | SWT.ON_TOP);
+								MessageBox mb = new MessageBox(shell, SWT.ICON_WARNING | SWT.OK);
+							     mb.setText("警告");
+							     mb.setMessage(grid.getColumn(i).getText()+"超出范围");
+							     mb.open();
 								break;
 							}else {
 								if(grid.getColumn(i).getColumnGroup()==inputColumnGroup) {
@@ -453,11 +485,11 @@ public class ManualDesignView extends ViewPart {
 					rowtestcase.clear();
 				}
 				else {
-					ConsoleHandler.info("输入不合法");
+					ConsoleHandler.error("输入不合法");
 				}
 			}
 				else {
-					ConsoleHandler.info("还有未填写的项");
+					ConsoleHandler.error("还有未填写的项");
 				}
 				
 			}
