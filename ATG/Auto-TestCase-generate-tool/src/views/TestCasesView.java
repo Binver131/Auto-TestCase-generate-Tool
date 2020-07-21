@@ -4,11 +4,15 @@ package views;
 import java.util.Date;
 
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleActionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -47,6 +51,7 @@ public class TestCasesView extends ViewPart implements ISelectionListener{
 	private GridColumn IDColumn;
 	private GridColumn evaColumn;
 	private Font font = new Font(Display.getDefault(), "宋体", 15, SWT.NONE);
+	
 
 	private Label requireNum;
 	@SuppressWarnings("deprecation")
@@ -195,14 +200,25 @@ public class TestCasesView extends ViewPart implements ISelectionListener{
 				if(!requirement.getRequirementOutput().equals("")) {
 					for (Variable Var : requirement.outputVars()) {
 						GridColumn in = new GridColumn(outputColumnGroup, SWT.NONE);
+						//in.addSelectionListener(listener);
 						in.setText(Var.getVariableName());
 						in.setHeaderFont(font);
 						in.setWidth(Var.getVariableName().length()*30);
 					}
 				}
+				int rownumber=1;
 				for(Testcase testcase:requirement.getTestcaseMap().values()) {
 					int columnCount = 1;
+					
 					GridItem item = new GridItem(grid, SWT.NONE);
+					//设置行背景色
+					if(rownumber%2==0) {
+						item.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+						rownumber++;
+					}
+					else {
+						rownumber++;
+					}
 					
 					item.setText(testcase.getTestcaseID()+"");
 					item.setText(columnCount++,testcase.getTestcaseEvaluate());
