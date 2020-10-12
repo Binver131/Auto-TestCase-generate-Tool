@@ -153,7 +153,7 @@ public class ManualDesignView extends ViewPart {
 		
 		IDColumn=new GridColumn(grid, SWT.NONE);
 		IDColumn.setText("用例标识");
-		IDColumn.setWidth(200);
+		IDColumn.setWidth(50);
 		IDColumn.setHeaderFont(font);
 		preColumnGroup=new GridColumnGroup(grid, SWT.NONE);
 		preColumnGroup.setText("先决条件");
@@ -176,7 +176,7 @@ public class ManualDesignView extends ViewPart {
 		evaColumn = new GridColumn(grid, SWT.NONE);
 		evaColumn.setText("评价准则");
 		evaColumn.setHeaderFont(font);
-		evaColumn.setWidth(200);
+		evaColumn.setWidth(50);
 		//grid.setVisible(false);
 		
 		gridEditor=new GridEditor(grid);
@@ -529,6 +529,7 @@ public class ManualDesignView extends ViewPart {
 				GridColumn in = new GridColumn(preColumnGroup, SWT.NONE);
 				in.setText(Var.getVariableName());
 				in.setHeaderFont(font);
+				//in.setWidth((grid.getParent().getBounds().width-100)/3/requirement.conditionVars().size());
 				in.setWidth(Var.getVariableName().length()*30);
 			}
 		}
@@ -537,6 +538,7 @@ public class ManualDesignView extends ViewPart {
 				GridColumn in = new GridColumn(inputColumnGroup, SWT.NONE);
 				in.setText(Var.getVariableName());
 				in.setHeaderFont(font);
+				//in.setWidth((grid.getParent().getBounds().width-100)/3/requirement.inputVars().size());
 				in.setWidth(Var.getVariableName().length()*30);
 			}
 		}
@@ -545,6 +547,7 @@ public class ManualDesignView extends ViewPart {
 				GridColumn in = new GridColumn(outputColumnGroup, SWT.NONE);
 				in.setText(Var.getVariableName());
 				in.setHeaderFont(font);
+				//in.setWidth((grid.getParent().getBounds().width-100)/3/requirement.outputVars().size());
 				in.setWidth(Var.getVariableName().length()*30);
 			}
 		}

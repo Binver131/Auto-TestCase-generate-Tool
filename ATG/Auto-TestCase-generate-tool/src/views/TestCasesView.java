@@ -6,6 +6,8 @@ import java.util.Date;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.viewers.ColumnLayoutData;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -26,6 +28,8 @@ import console.ConsoleHandler;
 import bean.Requirement;
 import bean.Testcase;
 import bean.Variable;
+
+import org.eclipse.nebula.jface.gridviewer.GridColumnLayout;
 import org.eclipse.nebula.widgets.grid.*;
 
 
@@ -63,6 +67,7 @@ public class TestCasesView extends ViewPart implements ISelectionListener{
 		layout.marginHeight = 2;
 		layout.marginWidth = 2;
 		top.setLayout(layout);
+		
 		// top banner
 		Composite banner = new Composite(top, SWT.NONE);
 		banner.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL, GridData.VERTICAL_ALIGN_BEGINNING, true, false));
@@ -113,12 +118,12 @@ public class TestCasesView extends ViewPart implements ISelectionListener{
 		grid.setLayoutData(new GridData(GridData.FILL_BOTH));
 		grid.setHeaderVisible(true);
 		grid.setFont(font);
-		grid.setAutoHeight(true);
-		grid.setAutoWidth(true);
+		grid.setAutoHeight(false);
+		grid.setAutoWidth(false);
 		
 		IDColumn=new GridColumn(grid, SWT.NONE);
 		IDColumn.setText("用例标识");
-		IDColumn.setWidth(200);
+		IDColumn.setWidth(100);
 		IDColumn.setHeaderFont(font);
 		preColumnGroup=new GridColumnGroup(grid, SWT.NONE);
 		preColumnGroup.setText("先决条件");
@@ -141,7 +146,7 @@ public class TestCasesView extends ViewPart implements ISelectionListener{
 		evaColumn = new GridColumn(grid, SWT.NONE);
 		evaColumn.setText("评价准则");
 		evaColumn.setHeaderFont(font);
-		evaColumn.setWidth(200);
+		evaColumn.setWidth(100);
 		grid.setVisible(false);
 	}
 
@@ -184,9 +189,11 @@ public class TestCasesView extends ViewPart implements ISelectionListener{
 				if(!requirement.getRequirementCondition().equals("")) {
 					for (Variable Var : requirement.conditionVars()) {
 						GridColumn in = new GridColumn(preColumnGroup, SWT.NONE);
+						
 						in.setText(Var.getVariableName());
 						in.setHeaderFont(font);
-						in.setWidth(Var.getVariableName().length()*30);
+						in.setWidth((grid.getParent().getBounds().width-200)/3/requirement.conditionVars().size());
+						//in.setWidth(Var.getVariableName().length()*10);
 					}
 				}
 				if(!requirement.getRequirementInput().equals("")) {
@@ -194,16 +201,17 @@ public class TestCasesView extends ViewPart implements ISelectionListener{
 						GridColumn in = new GridColumn(inputColumnGroup, SWT.NONE);
 						in.setText(Var.getVariableName());
 						in.setHeaderFont(font);
-						in.setWidth(Var.getVariableName().length()*30);
+						in.setWidth((grid.getParent().getBounds().width-200)/3/requirement.inputVars().size());
+						//in.setWidth(Var.getVariableName().length()*10);
 					}
 				}
 				if(!requirement.getRequirementOutput().equals("")) {
 					for (Variable Var : requirement.outputVars()) {
 						GridColumn in = new GridColumn(outputColumnGroup, SWT.NONE);
-						//in.addSelectionListener(listener);
 						in.setText(Var.getVariableName());
 						in.setHeaderFont(font);
-						in.setWidth(Var.getVariableName().length()*30);
+						in.setWidth((grid.getParent().getBounds().width-200)/3/requirement.outputVars().size());
+						//in.setWidth(Var.getVariableName().length()*10);
 					}
 				}
 				int rownumber=1;
